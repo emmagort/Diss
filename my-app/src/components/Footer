@@ -1,0 +1,14 @@
+//create a footer that says that this app was created by emma
+// and have a link back to the index page
+
+export default function Footer() {
+    return (
+        <div>
+        <h1>Created by Emma</h1>
+        <div>
+            <a href="http://localhost:3000/">Index</a>
+        </div>
+        </div>
+    );
+    }
+    
