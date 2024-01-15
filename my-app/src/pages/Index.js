@@ -2,8 +2,6 @@ import Home from './Home';
 import Student from './Student';
 import Teacher from './Teacher';
 
-//create a page that allows you to click on what page you want to go to
-//you can choose between student and teacher and home page
 
 export default function Index() {
     return (
