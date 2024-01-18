@@ -11,12 +11,19 @@ export default function Student(){
   function handleHighlight() {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
+    selection.modify('extend', 'forward', 'word');
     let range = selection.getRangeAt(0);
-    let mark = document.createElement('mark');
-    mark.style.backgroundColor = highlightColor;
-    mark.appendChild(range.extractContents());
-    range.insertNode(mark);
+    let span = document.createElement('span');
+    span.style.border = `2px solid ${highlightColor}`;
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
   }
+
+  //   let mark = document.createElement('mark');
+  //   mark.style.backgroundColor = highlightColor;
+  //   mark.appendChild(range.extractContents());
+  //   range.insertNode(mark);
+  // }
 
   return (
     <div>
@@ -30,22 +37,3 @@ export default function Student(){
     </div>
   );
 }
-
-
-// import React from 'react';
-// import { useLocation } from 'react-router-dom';
-
-// export default function Student(){
-//   const location = useLocation();
-//   const { title } = location.state;
-//   const { content } = location.state;
-//   const { answer } = location.state;
-
-//   return (
-//       <div>
-//         <h1>The question is: {title}</h1>
-//         <h2>The content is: {content}</h2>
-//         <h3>The answer is: {answer}</h3>
-//       </div>
-//   );
-// }
