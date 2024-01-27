@@ -120,6 +120,7 @@ export default function Teacher(){
         <input name="content" value={newQuestion.content} onChange={handleInputChange} placeholder="Content" />
         <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
         <button onClick={handleAddQuestion}>Add Question</button>
+        <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
       </div>
     </div>
   );
