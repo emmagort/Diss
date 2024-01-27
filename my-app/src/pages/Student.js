@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism.css';
+
+// Define a new renderer for code blocks
+const renderers = {
+  code: ({language, value}) => {
+    const validLanguage = Prism.languages[language] ? language : 'none';
+    const highlighted = Prism.highlight(value, Prism.languages[validLanguage], validLanguage);
+    return <pre dangerouslySetInnerHTML={{__html: highlighted}} />
+  }
+};
 
 export default function Student(){
   const location = useLocation();
@@ -12,6 +23,13 @@ export default function Student(){
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
     selection.modify('extend', 'forward', 'word');
+    const selectedWord = selection.toString();
+    if (selectedWord === answer) {
+      alert('Correct!');
+    }
+    else {
+      alert('Incorrect!');
+    }
     let range = selection.getRangeAt(0);
     let span = document.createElement('span');
     span.style.border = `2px solid ${highlightColor}`;
@@ -19,6 +37,7 @@ export default function Student(){
     range.insertNode(span);
   }
 
+  // HIGHLIGHT INSTEAD OF BOX
   //   let mark = document.createElement('mark');
   //   mark.style.backgroundColor = highlightColor;
   //   mark.appendChild(range.extractContents());
@@ -28,6 +47,7 @@ export default function Student(){
   return (
     <div>
       <h1>The question is: {title}</h1>
+      {/* <ReactMarkdown>{content}</ReactMarkdown> */}
       <h2 contentEditable={true} onMouseUp={handleHighlight}>The content is: {content}</h2>
       <h3>The answer is: {answer}</h3>
       <label>
@@ -37,3 +57,5 @@ export default function Student(){
     </div>
   );
 }
+
+
