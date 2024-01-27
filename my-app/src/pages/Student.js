@@ -14,8 +14,6 @@ const renderers = {
 
 export default function Student(){
   const location = useLocation();
-  // const { title } = location.state;
-  // const { content } = location.state;
   const { answer } = location.state;
   const [highlightColor, setHighlightColor] = useState('yellow');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
@@ -39,6 +37,11 @@ export default function Student(){
     range.insertNode(span);
   }
 
+  function handleMouseUp() {
+    const selectedText = window.getSelection().toString();
+    console.log('Selected text:', selectedText);
+  }
+
   // HIGHLIGHT INSTEAD OF BOX
   //   let mark = document.createElement('mark');
   //   mark.style.backgroundColor = highlightColor;
@@ -47,13 +50,13 @@ export default function Student(){
   // }
 
   return (
-    <div>
-      {questions.map((question, index) => (
-        <div key={index} className={question.style}>
-          <h1>The question is: {question.title}</h1>
-          <p contentEditable={true} onMourseUp={handleHighlight}>{question.content}</p>
-        </div>
-      ))}
+    <div onMouseUp={handleMouseUp}>
+    {questions.map((question, index) => (
+      <div key={index} className={question.style}>
+        <h1>The question is: {question.title}</h1>
+        <p>{question.content}</p>
+      </div>
+    ))}
 
       <label>
         Select highlight color:
