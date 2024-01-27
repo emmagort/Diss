@@ -6,6 +6,22 @@ export default function Teacher(){
   const [title, setTitle] = useState(localStorage.getItem('title') || '');
   const [content, setContent] = useState(localStorage.getItem('content') || '');
   const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
+  const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
+
+  useEffect(() => {
+    localStorage.setItem('questions', JSON.stringify(questions));
+  }, [questions]);
+
+
+  function handleInputChange(e) {
+    setNewQuestion({ ...newQuestion, [e.target.name]: e.target.value });
+  }
+
+  function handleAddQuestion(e) {
+    setQuestions([...questions, newQuestion]);
+    setNewQuestion({ style:'', title: '', content: '', answer: '' });
+  }
 
   const navigate = useNavigate();
 
@@ -48,6 +64,7 @@ export default function Teacher(){
 
   return (
     <div>
+    
       <form onSubmit={handlePartsSubmit}>
         <label htmlFor="title">Set Question Title</label>
         <input
@@ -80,8 +97,22 @@ export default function Teacher(){
         <button type="submit" onClick={handlePartsSubmit}>Submit</button>
         <button onClick={handleResetAnswer}>Reset</button>
       </form>
+      {questions.map((question, index) => (
+        <div key={index}>
+          <h1>The question is: {question.title}</h1>
+          <p>The content is: {question.content}</p>
+          <p>The answer is: {question.answer}</p>
+        </div>
+      ))}
       <button onClick={handleSubmit}>Preview</button>
       <button onClick={handleResetAll}>Reset All</button>
+      <div>
+        <input name="style" value={newQuestion.style} onChange={handleInputChange} placeholder="Style" />
+        <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
+        <input name="content" value={newQuestion.content} onChange={handleInputChange} placeholder="Content" />
+        <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
+        <button onClick={handleAddQuestion}>Add Question</button>
+      </div>
     </div>
   );
 }

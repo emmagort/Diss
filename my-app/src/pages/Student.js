@@ -14,10 +14,12 @@ const renderers = {
 
 export default function Student(){
   const location = useLocation();
-  const { title } = location.state;
-  const { content } = location.state;
+  // const { title } = location.state;
+  // const { content } = location.state;
   const { answer } = location.state;
   const [highlightColor, setHighlightColor] = useState('yellow');
+  const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
+
 
   function handleHighlight() {
     const selection = window.getSelection();
@@ -46,14 +48,18 @@ export default function Student(){
 
   return (
     <div>
-      <h1>The question is: {title}</h1>
-      {/* <ReactMarkdown>{content}</ReactMarkdown> */}
-      <h2 contentEditable={true} onMouseUp={handleHighlight}>The content is: {content}</h2>
-      <h3>The answer is: {answer}</h3>
+      {questions.map((question, index) => (
+        <div key={index} className={question.style}>
+          <h1>The question is: {question.title}</h1>
+          <p contentEditable={true} onMourseUp={handleHighlight}>{question.content}</p>
+        </div>
+      ))}
+
       <label>
         Select highlight color:
         <input type="color" value={highlightColor} onChange={(e) => setHighlightColor(e.target.value)} />
-      </label>
+      </label> 
+
     </div>
   );
 }
