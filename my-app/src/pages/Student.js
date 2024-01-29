@@ -70,9 +70,17 @@ export default function Student(){
   //   }
   // }
 
-  function handleMouseUp() {
-    const selectedText = window.getSelection().toString();
-    console.log('Selected text:', selectedText);
+  function handleBox() {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const newNode = document.createElement('span');
+      newNode.style.display = 'inline-block';
+      newNode.style.maxWidth = 'fit-content';
+      newNode.style.border = `2px solid ${highlightColor}`;
+      newNode.appendChild(range.extractContents());
+      range.insertNode(newNode);
+    }
   }
 
   // HIGHLIGHT INSTEAD OF BOX
@@ -89,7 +97,7 @@ export default function Student(){
     {questions.map((question, index) => (
       <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <h2 contentEditable={true} onMouseUp={handleHighlight}>
+        <h2 onMouseUp={handleBox}>
           {question.content.split('\n').map((line, i) => 
             <span key={i}>
               {line}
