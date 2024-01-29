@@ -65,22 +65,30 @@ export default function Student(){
 
   function handleBox() {
     const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      const startRange = document.createRange();
-      startRange.setStart(range.startContainer, range.startOffset);
-      startRange.setEnd(range.startContainer, range.startOffset + 1);
-      const startRect = startRange.getBoundingClientRect();
-      const newNode = document.createElement('div');
-      newNode.style.position = 'absolute';
-      newNode.style.left = `${startRect.left}px`;
-      newNode.style.top = `${rect.top}px`;
-      newNode.style.width = `${rect.right - startRect.left}px`;
-      newNode.style.height = `${rect.height}px`;
-      newNode.style.border = `2px solid ${highlightColor}`;
-      newNode.style.pointerEvents = 'none';
-      document.body.appendChild(newNode);
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    const startRange = document.createRange();
+    startRange.setStart(range.startContainer, range.startOffset);
+    startRange.setEnd(range.startContainer, range.startOffset + 1);
+    const startRect = startRange.getBoundingClientRect();
+
+    const newNode = document.createElement('div');
+    newNode.style.position = 'absolute';
+    newNode.style.left = `${startRect.left}px`;
+    newNode.style.top = `${rect.top}px`;
+    const width = rect.right - startRect.left;
+    if (width == rect.width){
+      newNode.style.width = `${width + 10}px`;
+    }
+    else {
+      newNode.style.width = `${width}px`; 
+    }
+    newNode.style.height = `${rect.height}px`;
+    newNode.style.border = `2px solid ${highlightColor}`;
+    newNode.style.pointerEvents = 'none';
+    document.body.appendChild(newNode);
     }
   }
 
