@@ -36,13 +36,6 @@ export default function Student(){
   // }
 
 
-  function handleBox(content, answer) {
-    return content.split(' ').map((word, index) => (
-      <span key={index} style={word === answer ? { border: `2px solid ${highlightColor}` } : {}}>
-        {word}
-      </span>
-    ));
-  }
   
   function handleHighlight() {
     const selection = window.getSelection();
@@ -74,12 +67,20 @@ export default function Student(){
     const selection = window.getSelection();
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
-      const newNode = document.createElement('span');
-      newNode.style.display = 'inline-block';
-      newNode.style.maxWidth = 'fit-content';
+      const rect = range.getBoundingClientRect();
+      const startRange = document.createRange();
+      startRange.setStart(range.startContainer, range.startOffset);
+      startRange.setEnd(range.startContainer, range.startOffset + 1);
+      const startRect = startRange.getBoundingClientRect();
+      const newNode = document.createElement('div');
+      newNode.style.position = 'absolute';
+      newNode.style.left = `${startRect.left}px`;
+      newNode.style.top = `${rect.top}px`;
+      newNode.style.width = `${rect.right - startRect.left}px`;
+      newNode.style.height = `${rect.height}px`;
       newNode.style.border = `2px solid ${highlightColor}`;
-      newNode.appendChild(range.extractContents());
-      range.insertNode(newNode);
+      newNode.style.pointerEvents = 'none';
+      document.body.appendChild(newNode);
     }
   }
 
@@ -92,19 +93,13 @@ export default function Student(){
 
   return (
     <div>
-    <input type="color" value={highlightColor} onChange={handleColorChange} />
 
     {questions.map((question, index) => (
       <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <h2 onMouseUp={handleBox} style={{whiteSpace: 'pre-wrap'}}>
-          {question.content.split('\n').map((line, i) => 
-            <span key={i}>
-              {line}
-              <br/>
-            </span>
-          )}
-          </h2>
+        <p onMouseUp={handleBox} style={{whiteSpace: 'pre-wrap'}}>
+          {question.content}
+          </p>
       </div>
     ))}
 

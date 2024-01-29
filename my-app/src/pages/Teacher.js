@@ -121,7 +121,7 @@ export default function Teacher(){
       {questions.map((question, index) => (
         <div key={index}>
           <h1>The question is: {question.title}</h1>
-          <p>The content is: {question.content}</p>
+          <p style={{whiteSpace:'pre-wrap'}}>The content is: {question.content}</p>
           <p>The answer is: {question.answer}</p>
           <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
           <button onClick={() => handleEditQestion(index)}>Edit Question</button>
