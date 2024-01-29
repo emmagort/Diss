@@ -97,7 +97,7 @@ export default function Student(){
     {questions.map((question, index) => (
       <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <h2 onMouseUp={handleBox}>
+        <h2 onMouseUp={handleBox} style={{whiteSpace: 'pre-wrap'}}>
           {question.content.split('\n').map((line, i) => 
             <span key={i}>
               {line}

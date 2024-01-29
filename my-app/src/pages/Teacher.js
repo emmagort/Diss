@@ -136,7 +136,7 @@ export default function Teacher(){
           <option value="highlight">Highlight</option>
         </select>
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
-        <textarea name="content" value={newQuestion.content} onChange={handleInputChange} placeholder="Content" />
+        <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{whiteSpace: 'pre-wrap'}} placeholder="Content" />
         <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
