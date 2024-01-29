@@ -8,6 +8,7 @@ export default function Teacher(){
   const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
+  const [editingIndex, setEditingIndex] = useState(null);
 
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
@@ -19,7 +20,14 @@ export default function Teacher(){
   }
 
   function handleAddQuestion(e) {
+    if (editingIndex !== null) {
     setQuestions([...questions, newQuestion]);
+    setNewQuestion({ style:'', title: '', content: '', answer: '' });
+    setEditingIndex(null);
+    }
+    else {
+      setQuestions([...questions, newQuestion]);
+    }
     setNewQuestion({ style:'', title: '', content: '', answer: '' });
   }
 
@@ -61,6 +69,12 @@ export default function Teacher(){
   //   setContent('');
   //   setAnswer('');
   // }
+
+  function handleEditQestion(index) {
+    setNewQuestion(questions[index]);
+    setQuestions(questions.filter((_, i) => i !== index));
+    setEditingIndex(index);
+  }
 
   function handleDeleteQuestion(index) {
     setQuestions(questions.filter((question, i) => i !== index));
@@ -110,16 +124,21 @@ export default function Teacher(){
           <p>The content is: {question.content}</p>
           <p>The answer is: {question.answer}</p>
           <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
+          <button onClick={() => handleEditQestion(index)}>Edit Question</button>
         </div>
       ))}
       <button onClick={handleSubmit}>Preview</button>
       {/* <button onClick={handleResetAll}>Reset All</button> */}
       <div>
-        <input name="style" value={newQuestion.style} onChange={handleInputChange} placeholder="Style" />
+        <select name="style" value={newQuestion.style} onChange={handleInputChange}>
+          <option value="">Select style</option>
+          <option value="box">Box</option>
+          <option value="highlight">Highlight</option>
+        </select>
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
-        <input name="content" value={newQuestion.content} onChange={handleInputChange} placeholder="Content" />
+        <textarea name="content" value={newQuestion.content} onChange={handleInputChange} placeholder="Content" />
         <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
-        <button onClick={handleAddQuestion}>Add Question</button>
+        <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
       </div>
     </div>

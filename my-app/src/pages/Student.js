@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
@@ -18,7 +18,32 @@ export default function Student(){
   const [highlightColor, setHighlightColor] = useState('yellow');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
 
+  //Something else
+  useEffect(() => {
+    setQuestions(JSON.parse(localStorage.getItem('questions') || []));
+  }, []); 
 
+  function handleColorChange(e) {
+    setHighlightColor(e.target.value);
+  }
+
+  // function handleHighlight(content, answer) {
+  //   return content.split(' ').map((word, index) => (
+  //     <span key={index} style={word === answer ? { backgroundColor: highlightColor } : {}}>
+  //       {word}
+  //     </span>
+  //   ));
+  // }
+
+
+  function handleBox(content, answer) {
+    return content.split(' ').map((word, index) => (
+      <span key={index} style={word === answer ? { border: `2px solid ${highlightColor}` } : {}}>
+        {word}
+      </span>
+    ));
+  }
+  
   function handleHighlight() {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
@@ -37,6 +62,14 @@ export default function Student(){
     range.insertNode(span);
   }
 
+  // function handleCheckAnswer(answer) {
+  //   if (selection.trim() === answer) {
+  //     alert('Correct!');
+  //   } else {
+  //     alert('Incorrect!');
+  //   }
+  // }
+
   function handleMouseUp() {
     const selectedText = window.getSelection().toString();
     console.log('Selected text:', selectedText);
@@ -50,11 +83,20 @@ export default function Student(){
   // }
 
   return (
-    <div onMouseUp={handleMouseUp}>
+    <div>
+    <input type="color" value={highlightColor} onChange={handleColorChange} />
+
     {questions.map((question, index) => (
-      <div key={index} className={question.style}>
+      <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <p>{question.content}</p>
+        <h2 contentEditable={true} onMouseUp={handleHighlight}>
+          {question.content.split('\n').map((line, i) => 
+            <span key={i}>
+              {line}
+              <br/>
+            </span>
+          )}
+          </h2>
       </div>
     ))}
 
