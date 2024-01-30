@@ -85,39 +85,7 @@ export default function Teacher(){
   }
 
   return (
-    <div>
-    
-      {/* <form onSubmit={handlePartsSubmit}>
-        <label htmlFor="title">Set Question Title</label>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          id="title"
-        />
-        <button type="submit" onClick={handlePartsSubmit}>Submit</button>
-        <button onClick={handleResetTitle}>Reset</button>
-      </form> */}
-
-      {/* <form onSubmit={handlePartsSubmit}>
-        <label htmlFor="content">Set Question Content</label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          id="content"
-        />
-        <button type="submit" onClick={handlePartsSubmit}>Submit</button>
-        <button onClick={handleResetContent}>Reset</button>
-      </form> */}
-      {/* <form onSubmit={handlePartsSubmit}>
-        <label htmlFor="answer">Set Question Answer</label>
-        <input
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          id="answer"
-        />
-        <button type="submit" onClick={handlePartsSubmit}>Submit</button>
-        <button onClick={handleResetAnswer}>Reset</button>
-      </form> */}
+    <div style={{paddingLeft: '20px'}}>
       {questions.map((question, index) => (
         <div key={index}>
           <h1>The question is: {question.title}</h1>

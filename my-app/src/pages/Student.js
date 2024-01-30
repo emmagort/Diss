@@ -18,42 +18,28 @@ export default function Student(){
   const [highlightColor, setHighlightColor] = useState('yellow');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
 
-  //Something else
   useEffect(() => {
     setQuestions(JSON.parse(localStorage.getItem('questions') || []));
   }, []); 
 
-  function handleColorChange(e) {
-    setHighlightColor(e.target.value);
-  }
-
-  // function handleHighlight(content, answer) {
-  //   return content.split(' ').map((word, index) => (
-  //     <span key={index} style={word === answer ? { backgroundColor: highlightColor } : {}}>
-  //       {word}
-  //     </span>
-  //   ));
-  // }
-
-
   
-  function handleHighlight() {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
-    selection.modify('extend', 'forward', 'word');
-    const selectedWord = selection.toString();
-    if (selectedWord === answer) {
-      alert('Correct!');
-    }
-    else {
-      alert('Incorrect!');
-    }
-    let range = selection.getRangeAt(0);
-    let span = document.createElement('span');
-    span.style.border = `2px solid ${highlightColor}`;
-    span.appendChild(range.extractContents());
-    range.insertNode(span);
-  }
+  // function handleHighlight() {
+  //   const selection = window.getSelection();
+  //   if (!selection.rangeCount) return;
+  //   selection.modify('extend', 'forward', 'word');
+  //   const selectedWord = selection.toString();
+  //   if (selectedWord === answer) {
+  //     alert('Correct!');
+  //   }
+  //   else {
+  //     alert('Incorrect!');
+  //   }
+  //   let range = selection.getRangeAt(0);
+  //   let span = document.createElement('span');
+  //   span.style.border = `2px solid ${highlightColor}`;
+  //   span.appendChild(range.extractContents());
+  //   range.insertNode(span);
+  // }
 
   // function handleCheckAnswer(answer) {
   //   if (selection.trim() === answer) {
@@ -76,14 +62,14 @@ export default function Student(){
 
     const newNode = document.createElement('div');
     newNode.style.position = 'absolute';
-    newNode.style.left = `${startRect.left}px`;
+    newNode.style.left = `${startRect.left-5}px`;
     newNode.style.top = `${rect.top}px`;
     const width = rect.right - startRect.left;
     if (width == rect.width){
-      newNode.style.width = `${width + 10}px`;
+      newNode.style.width = `${width + 15}px`;
     }
     else {
-      newNode.style.width = `${width}px`; 
+      newNode.style.width = `${width + 5}px`; 
     }
     newNode.style.height = `${rect.height}px`;
     newNode.style.border = `2px solid ${highlightColor}`;
@@ -92,20 +78,25 @@ export default function Student(){
     }
   }
 
-  // HIGHLIGHT INSTEAD OF BOX
-  //   let mark = document.createElement('mark');
-  //   mark.style.backgroundColor = highlightColor;
-  //   mark.appendChild(range.extractContents());
-  //   range.insertNode(mark);
-  // }
+
+
+  function handleHighlight() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    let range = selection.getRangeAt(0);
+    let mark = document.createElement('mark');
+    mark.style.backgroundColor = highlightColor;
+    mark.appendChild(range.extractContents());
+    range.insertNode(mark);
+  }
 
   return (
-    <div>
+    <div style={{ paddingLeft: '20px' }} >
 
     {questions.map((question, index) => (
       <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <p onMouseUp={handleBox} style={{whiteSpace: 'pre-wrap'}}>
+        <p onMouseUp={question.style === 'highlight' ? handleHighlight : handleBox} style={{whiteSpace: 'pre-wrap'}}>
           {question.content}
           </p>
       </div>
