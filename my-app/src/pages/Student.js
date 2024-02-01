@@ -65,7 +65,7 @@ export default function Student(){
     newNode.style.left = `${startRect.left-5}px`;
     newNode.style.top = `${rect.top}px`;
     const width = rect.right - startRect.left;
-    if (width == rect.width){
+    if (width === rect.width){
       newNode.style.width = `${width + 15}px`;
     }
     else {
@@ -90,13 +90,53 @@ export default function Student(){
     range.insertNode(mark);
   }
 
+function handleClickWord(event) {
+  const selection = window.getSelection();
+  const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  selection.modify('move', 'backward', 'word');
+  selection.modify('extend', 'forward', 'word');
+
+  if (selection.toString().trim() !== '') {
+    const span = document.createElement('span');
+    span.style.border = `2px solid ${highlightColor}`;
+    span.appendChild(document.createTextNode(selection.toString()));
+    selection.getRangeAt(0).deleteContents();
+    selection.getRangeAt(0).insertNode(span);
+  }
+}
+
+function handleClickLine(event) {
+  const selection = window.getSelection();
+  const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  selection.modify('move', 'backward', 'lineboundary');
+  selection.modify('extend', 'forward', 'lineboundary');
+
+  if (selection.toString().trim() !== '') {
+    const span = document.createElement('span');
+    span.style.border = '2px solid red';
+    span.appendChild(document.createTextNode(selection.toString()));
+    selection.getRangeAt(0).deleteContents();
+    selection.getRangeAt(0).insertNode(span);
+  }
+}
+
   return (
     <div style={{ paddingLeft: '20px' }} >
 
     {questions.map((question, index) => (
       <div key={index}>
         <h1>The question is: {question.title}</h1>
-        <p onMouseUp={question.style === 'highlight' ? handleHighlight : handleBox} style={{whiteSpace: 'pre-wrap'}}>
+        <p onMouseUp={
+            question.style === 'highlight' ? handleHighlight :
+            question.style === 'box' ? handleBox :
+            question.style === 'clickWord' ? handleClickWord :
+            handleClickLine
+          } 
+        style={{whiteSpace: 'pre-wrap'}}>
           {question.content}
           </p>
       </div>

@@ -102,6 +102,8 @@ export default function Teacher(){
           <option value="">Select style</option>
           <option value="box">Box</option>
           <option value="highlight">Highlight</option>
+          <option value="clickWord">Click Word</option>
+          <option value="clickLine">Click Line</option>
         </select>
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{whiteSpace: 'pre-wrap'}} placeholder="Content" />
