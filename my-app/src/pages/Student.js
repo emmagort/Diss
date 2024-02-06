@@ -17,6 +17,7 @@ export default function Student(){
   const { answer } = location.state;
   const [highlightColor, setHighlightColor] = useState('yellow');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
+  const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
 
   useEffect(() => {
     setQuestions(JSON.parse(localStorage.getItem('questions') || []));
@@ -136,16 +137,21 @@ function handleClickLine(event) {
             question.style === 'clickWord' ? handleClickWord :
             handleClickLine
           } 
-        style={{whiteSpace: 'pre-wrap'}}>
+        style={{whiteSpace: 'pre-wrap', fontFamily: 'monospace',}}>
           {question.content}
           </p>
       </div>
     ))}
 
-      <label>
-        Select highlight color:
-        <input type="color" value={highlightColor} onChange={(e) => setHighlightColor(e.target.value)} />
-      </label> 
+    <label>
+      Select highlight color:
+      {colors.map((color, index) => (
+        <label key={index}>
+          <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
+          <span style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}></span>
+        </label>
+      ))}
+    </label> 
 
     </div>
   );
