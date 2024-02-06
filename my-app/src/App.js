@@ -11,6 +11,7 @@ import Index from './pages/Index';
 import Teacher from './pages/Teacher';
 
 export default function App() {
+  const qeuestions = JSON.parse(localStorage.getItem('questions')) || [];
   return (
     <BrowserRouter>
       <Routes>
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="home" element={<Home />} />
           <Route path="student" element={<Student />} />
           <Route path="teacher" element={<Teacher />} />
+          <Route path="question/:index" element={<Student />} /> 
           <Route path="*" element={<NoPage />} />
       </Routes>
     </BrowserRouter>

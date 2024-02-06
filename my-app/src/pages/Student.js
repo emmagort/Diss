@@ -117,7 +117,7 @@ function handleClickLine(event) {
 
   if (selection.toString().trim() !== '') {
     const span = document.createElement('span');
-    span.style.border = '2px solid red';
+    span.style.border = `2px solid ${highlightColor}`;
     span.appendChild(document.createTextNode(selection.toString()));
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);

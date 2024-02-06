@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function Teacher(){
@@ -9,10 +9,22 @@ export default function Teacher(){
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
   const [editingIndex, setEditingIndex] = useState(null);
+  const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
+
+
+  const handleTitleClick = (index) => {
+    if (selectedQuestionIndex === index) {
+      setSelectedQuestionIndex(null);
+    } else {
+      setSelectedQuestionIndex(index);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
   }, [questions]);
+
+
 
 
   function handleInputChange(e) {
@@ -48,28 +60,6 @@ export default function Teacher(){
     navigate('/student', { state: { title, content, answer } });
   }
 
-  // function handleResetTitle(e) {
-  //   e.preventDefault();
-  //   setTitle('');
-  // }
-
-  // function handleResetContent(e) { 
-  //   e.preventDefault();
-  //   setContent('');
-  // }
-
-  // function handleResetAnswer(e) {
-  //   e.preventDefault();
-  //   setAnswer('');
-  // }
-
-  // function handleResetAll(e) {
-  //   e.preventDefault();
-  //   setTitle('');
-  //   setContent('');
-  //   setAnswer('');
-  // }
-
   function handleEditQestion(index) {
     setNewQuestion(questions[index]);
     setQuestions(questions.filter((_, i) => i !== index));
@@ -86,13 +76,18 @@ export default function Teacher(){
 
   return (
     <div style={{paddingLeft: '20px'}}>
+      <h1>Questions</h1>
       {questions.map((question, index) => (
         <div key={index}>
-          <h1>The question is: {question.title}</h1>
-          <p style={{whiteSpace:'pre-wrap'}}>The content is: {question.content}</p>
-          <p>The answer is: {question.answer}</p>
-          <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
-          <button onClick={() => handleEditQestion(index)}>Edit Question</button>
+          <h2 onClick={() => handleTitleClick(index)}>{question.title}</h2>
+          {selectedQuestionIndex === index && (
+            <>
+              <p style={{whiteSpace:'pre-wrap'}}>{question.content}</p>
+              <p>The answer is: {question.answer}</p>
+              <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
+              <button onClick={() => handleEditQestion(index)}>Edit Question</button>
+            </>
+          )}
         </div>
       ))}
       <button onClick={handleSubmit}>Preview</button>
