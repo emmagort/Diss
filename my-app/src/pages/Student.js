@@ -3,14 +3,14 @@ import { useLocation } from 'react-router-dom';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
-// Define a new renderer for code blocks
-const renderers = {
-  code: ({language, value}) => {
-    const validLanguage = Prism.languages[language] ? language : 'none';
-    const highlighted = Prism.highlight(value, Prism.languages[validLanguage], validLanguage);
-    return <pre dangerouslySetInnerHTML={{__html: highlighted}} />
-  }
-};
+// // Define a new renderer for code blocks
+// const renderers = {
+//   code: ({language, value}) => {
+//     const validLanguage = Prism.languages[language] ? language : 'none';
+//     const highlighted = Prism.highlight(value, Prism.languages[validLanguage], validLanguage);
+//     return <pre dangerouslySetInnerHTML={{__html: highlighted}} />
+//   }
+// };
 
 export default function Student(){
   const location = useLocation();
@@ -18,6 +18,7 @@ export default function Student(){
   const [highlightColor, setHighlightColor] = useState('yellow');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
+  const [changes, setChanges] = useState([]);
 
   useEffect(() => {
     setQuestions(JSON.parse(localStorage.getItem('questions') || []));
@@ -78,7 +79,8 @@ export default function Student(){
     newNode.style.pointerEvents = 'none';
     document.body.appendChild(newNode);
     }
-  }
+    }
+    //setChanges(prevChanges => [...prevChanges, { type: 'box', node: mark }]);
   }
 
 
@@ -92,6 +94,7 @@ export default function Student(){
     mark.style.backgroundColor = highlightColor;
     mark.appendChild(range.extractContents());
     range.insertNode(mark);
+    setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark }]);
     }
   }
 
@@ -111,6 +114,7 @@ function handleClickWord(event) {
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
   }
+  //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span }]);
 }
 
 function handleClickLine(event) {
@@ -128,6 +132,13 @@ function handleClickLine(event) {
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
   }
+}
+function handleUndo() {
+  const lastChange = changes.pop();
+  if (lastChange.type === 'highlight') {
+    lastChange.node.outerHTML = lastChange.node.innerHTML;
+  }
+  setChanges([...changes]);
 }
 
   return (
@@ -147,7 +158,9 @@ function handleClickLine(event) {
           </p>
       </div>
     ))}
-
+    <div>
+    <button onClick={handleUndo}>Undo</button>
+    </div>
     <label>
       Select highlight color:
       {colors.map((color, index) => (
