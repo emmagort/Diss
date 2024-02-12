@@ -135,7 +135,7 @@ function handleClickLine(event) {
 
     {questions.map((question, index) => (
       <div key={index}>
-        <h1>The question is: {question.title}</h1>
+        <h2>{question.title}</h2>
         <p onMouseUp={
             question.style === 'highlight' ? handleHighlight :
             question.style === 'box' ? handleBox :

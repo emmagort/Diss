@@ -10,22 +10,25 @@ export default function Teacher(){
   const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
-
+  const [filename, setFilename] = useState('questions.txt');
 
   const handleImport = (event) => {
+
     const file = event.target.files[0];
     const reader = new FileReader();
   
     reader.onload = (event) => {
-      const blocks = event.target.result.split('----Answer:\n');
+      const blocks = event.target.result.split('\n----Style:');
       const questions = [];
   
       for (const block of blocks) {
-        const [questionPart, answer] = block.split('----Content:\n');
-        const lines = questionPart.split('\n');
+        if (block.trim() === '') continue; // Skip empty blocks
+  
+        const lines = block.split('\n');
         const style = lines[0].split('----Style: ')[1];
         const title = lines[1].split('----Question: ')[1];
-        const content = lines.slice(2).join('\n');
+        const content = lines[2].split('----Content: ')[1];
+        const answer = lines[3].split('----Answer: ')[1];
   
         questions.push({ style, title, content, answer });
       }
@@ -36,6 +39,37 @@ export default function Teacher(){
     reader.readAsText(file);
   };
 
+
+  const handleExport = (filename) => {
+    const content = questions.map(question => 
+      `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answer: ${question.answer}`
+    ).join('\n');
+  
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+  
+    // Clean up
+    URL.revokeObjectURL(url);
+    link.remove();
+  };
+
+  const handleSave = () => {
+    handleExport(filename);
+  };
+
+  const handleSaveAs = () => {
+    const newFilename = prompt('Enter new filename:');
+    if (newFilename) {
+      setFilename(newFilename);
+      handleExport(newFilename);
+    }
+  };
+
   const handleTitleClick = (index) => {
     if (selectedQuestionIndex === index) {
       setSelectedQuestionIndex(null);
@@ -43,6 +77,7 @@ export default function Teacher(){
       setSelectedQuestionIndex(index);
     }
   };
+
 
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
@@ -108,6 +143,7 @@ export default function Teacher(){
             <>
               <p style={{fontFamily: 'monospace', whiteSpace:'pre-wrap'}}>{question.content}</p>
               <p>The answer is: {question.answer}</p>
+              <p>The style is: {question.style}</p>
               <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
               <button onClick={() => handleEditQestion(index)}>Edit Question</button>
             </>
@@ -130,6 +166,10 @@ export default function Teacher(){
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
         <input type="file" onChange={handleImport} />
+      </div>
+      <div>
+      <button onClick={handleSave}>Save</button>
+      <button onClick={handleSaveAs}>Save As</button>   
       </div>
     </div>
   );
