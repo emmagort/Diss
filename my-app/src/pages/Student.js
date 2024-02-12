@@ -52,6 +52,7 @@ export default function Student(){
 
   function handleBox() {
     const selection = window.getSelection();
+  if (selection.toString().trim() !== '') {
   if (selection.rangeCount > 0) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
@@ -78,20 +79,24 @@ export default function Student(){
     document.body.appendChild(newNode);
     }
   }
+  }
 
 
 
   function handleHighlight() {
     const selection = window.getSelection();
+    if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
     let range = selection.getRangeAt(0);
     let mark = document.createElement('mark');
     mark.style.backgroundColor = highlightColor;
     mark.appendChild(range.extractContents());
     range.insertNode(mark);
+    }
   }
 
 function handleClickWord(event) {
+  
   const selection = window.getSelection();
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
   selection.removeAllRanges();
