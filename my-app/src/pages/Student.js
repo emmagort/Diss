@@ -6,7 +6,7 @@ import 'prismjs/themes/prism.css';
 export default function Student() {
   const location = useLocation();
   const { answer } = location.state;
-  const [highlightColor, setHighlightColor] = useState('yellow');
+  const [highlightColor, setHighlightColor] = useState('#FFD700');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
@@ -82,6 +82,16 @@ export default function Student() {
       range.insertNode(mark);
       setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark }]);
       localStorage.setItem('changes', JSON.stringify(changes));
+      
+      if (window.getSelection) {
+        if (window.getSelection().empty) {  // Chrome
+          window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  // Firefox
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {  // IE?
+        document.selection.empty();
+      }
     }
     }
   
