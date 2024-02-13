@@ -10,10 +10,27 @@ export default function Student() {
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   useEffect(() => {
     setQuestions(JSON.parse(localStorage.getItem('questions') || []));
   }, []);
+
+  function goToNextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  }
+
+  function goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+
 
   function handleBox() {
     const selection = window.getSelection();
@@ -43,6 +60,7 @@ export default function Student() {
         newNode.style.pointerEvents = 'none';
         document.body.appendChild(newNode);
         setChanges(prevChanges => [...prevChanges, { type: 'box', node: newNode }]);
+        localStorage.setItem('changes', JSON.stringify(changes));
       }
     }
   }
@@ -63,8 +81,10 @@ export default function Student() {
       mark.appendChild(range.extractContents());
       range.insertNode(mark);
       setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark }]);
+      localStorage.setItem('changes', JSON.stringify(changes));
     }
-  }
+    }
+  
 
   function handleClickWord(event) {
 
@@ -128,39 +148,69 @@ export default function Student() {
       handleUndo();
     }
   }
-  return (
-    <div style={{ paddingLeft: '20px' }} >
 
-      {questions.map((question, index) => (
-        <div key={index}>
-          <h2>{question.title}</h2>
-          <p onMouseUp={
-            question.style === 'highlight' ? handleHighlight :
-              question.style === 'box' ? handleBox :
-                question.style === 'clickWord' ? handleClickWord :
-                  handleClickLine
-          }
-            style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}>
-            {question.content}
-          </p>
-        </div>
-      ))}
-      <div>
+  function checkAnswer(index) {
+    const currentQuestion = questions[index]; 
+    // if (!currentQuestion) return;
+    const studentAnswer = window.getSelection().toString();
+    if (studentAnswer.trim() !== '') {
+      if (studentAnswer === currentQuestion.answer) {
+        alert('Correct!');
+      }
+    }
+  }
+
+
+return(
+  <div style={{ 
+    display: 'flex', 
+    flexDirection: 'column', 
+    justifyContent: 'center',
+    alignItems: 'center', 
+    height: '100vh',
+    overflow: 'auto',
+     }}>
+     <div>
+      <h2>{currentQuestion.title}</h2>
+      <p onMouseUp={
+        currentQuestion.style === 'highlight' ? handleHighlight :
+          currentQuestion.style === 'box' ? handleBox :
+            currentQuestion.style === 'clickWord' ? handleClickWord :
+              handleClickLine
+      }
+        style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}>
+        {currentQuestion.content}
+      </p>
+      <div style={{alignItems: 'left'}}>
+      <button onClick={() => checkAnswer(currentQuestionIndex)}>Check Answer</button>
+      </div>
+      <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'auto',
+     }}>
+      <div style={{ marginTop: 'auto' }}>
         <button onClick={handleUndo}>Undo</button>
         <button onClick={handleReset}>Reset All</button>
       </div>
+      <div style={{ marginTop: 'auto' }}>
+        <button onClick={goToPreviousQuestion}>Previous Question</button>
+        <button onClick={goToNextQuestion}>Next Question</button>
+      </div>
+
       <label>
         Select highlight color:
-        {colors.map((color, index) => (
-          <label key={index}>
-            <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
-            <span style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}></span>
-          </label>
-        ))}
+         {colors.map((color, index) => (
+           <label key={index}>
+             <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
+             <span style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}></span>
+           </label>
+         ))}
       </label>
-
+      </div>
     </div>
+  </div>
   );
 }
-
-

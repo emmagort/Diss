@@ -164,6 +164,9 @@ export default function Teacher() {
         <input type="file" onChange={handleImport} />
       </div>
       <div>
+        <input type="file" onChange={handleImport} />
+      </div>
+      <div>
         <button onClick={handleSave}>Save</button>
         <button onClick={handleSaveAs}>Save As</button>
       </div>
