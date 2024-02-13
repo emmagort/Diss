@@ -86,7 +86,12 @@ export default function Student(){
 
 
   function handleHighlight() {
+   
     const selection = window.getSelection();
+    const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
+    if (alreadyClicked) {
+      return;
+    }
     if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
     let range = selection.getRangeAt(0);
@@ -101,6 +106,10 @@ export default function Student(){
 function handleClickWord(event) {
   
   const selection = window.getSelection();
+  const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
+  if (alreadyClicked) {
+    return;
+  }
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
   selection.removeAllRanges();
   selection.addRange(range);
@@ -113,12 +122,17 @@ function handleClickWord(event) {
     span.appendChild(document.createTextNode(selection.toString()));
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
+    setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span }]);
   }
-  //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span }]);
-}
+  }
 
 function handleClickLine(event) {
+
   const selection = window.getSelection();
+  const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
+  if (alreadyClicked) {
+    return;
+  }
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
   selection.removeAllRanges();
   selection.addRange(range);
@@ -131,16 +145,26 @@ function handleClickLine(event) {
     span.appendChild(document.createTextNode(selection.toString()));
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
+    setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span }]);
   }
 }
 function handleUndo() {
+  if (changes.length === 0) return;
   const lastChange = changes.pop();
   if (lastChange.type === 'highlight') {
     lastChange.node.outerHTML = lastChange.node.innerHTML;
   }
+  else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine') {
+    lastChange.node.style.border = 'none';
+  }
   setChanges([...changes]);
 }
 
+function handleReset() {
+  while (changes.length > 0) {
+    handleUndo();
+  }
+}
   return (
     <div style={{ paddingLeft: '20px' }} >
 
@@ -160,6 +184,7 @@ function handleUndo() {
     ))}
     <div>
     <button onClick={handleUndo}>Undo</button>
+    <button onClick={handleReset}>Reset All</button>
     </div>
     <label>
       Select highlight color:
