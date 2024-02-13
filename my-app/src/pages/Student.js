@@ -78,9 +78,9 @@ export default function Student(){
     newNode.style.border = `2px solid ${highlightColor}`;
     newNode.style.pointerEvents = 'none';
     document.body.appendChild(newNode);
+    setChanges(prevChanges => [...prevChanges, { type: 'box', node: newNode }]);
     }
     }
-    //setChanges(prevChanges => [...prevChanges, { type: 'box', node: mark }]);
   }
 
 
@@ -154,7 +154,7 @@ function handleUndo() {
   if (lastChange.type === 'highlight') {
     lastChange.node.outerHTML = lastChange.node.innerHTML;
   }
-  else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine') {
+  else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine'|| lastChange.type === 'box') {
     lastChange.node.style.border = 'none';
   }
   setChanges([...changes]);
