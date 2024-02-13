@@ -20,6 +20,7 @@ export default function Teacher(){
     reader.onload = (event) => {
       const blocks = event.target.result.split('\n----Style:');
       const questions = [];
+      const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
   
       for (const block of blocks) {
         if (block.trim() === '') continue; // Skip empty blocks
@@ -32,8 +33,7 @@ export default function Teacher(){
   
         questions.push({ style, title, content, answer });
       }
-  
-      setQuestions(questions);
+      setQuestions([...existingQuestions, ...questions]);
     };
   
     reader.readAsText(file);
