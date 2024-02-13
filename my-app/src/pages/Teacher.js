@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function Teacher() {
+  const [title, setTitle] = useState(localStorage.getItem('title') || '');
+  const [content, setContent] = useState(localStorage.getItem('content') || '');
+  const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
   const [editingIndex, setEditingIndex] = useState(null);
