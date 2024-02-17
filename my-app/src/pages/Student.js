@@ -27,48 +27,98 @@ export default function Student() {
   }, []);
 
 
-  function goToNextQuestion() {
-    if (currentQuestionIndex === questions.length - 1) {
-      return;
+  useEffect(() => {
+    // Get the undo button
+    const undoButton = document.getElementById('undoButton');
+  
+    // Get the changes for the current page
+    const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
+  
+    // Disable the undo button if there are no changes for the current page, enable it otherwise
+    undoButton.disabled = currentPageChanges.length === 0;
+  }, [changes, currentQuestionIndex]);
+
+
+//   function goToNextQuestion() {
+//     if (currentQuestionIndex === questions.length - 1) {
+//       return;
+//     }
+//     // Hide the changes for the current question
+//     changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
+//       if (change.type === 'highlight') {
+//         change.node.outerHTML = change.node.textContent;
+//       }
+//     });
+
+//     // Go to the next question
+//     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+
+//     // Show the changes for the next question
+//     changes.filter(change => change.index === currentQuestionIndex + 1).forEach((change) => {
+//       if (change.type === 'highlight') {
+//         change.node.outerHTML = change.originalOuterHTML;
+//       }
+//     });
+//     localStorage.setItem('changes', JSON.stringify(changes));
+//   }
+
+//   function goToPreviousQuestion() {
+//     if (currentQuestionIndex > 0) {
+//       // Hide the changes for the current question
+//       changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
+//         if (change.type === 'highlight') {
+//           change.node.outerHTML = change.node.textContent;
+//         }
+//       });
+
+//       // Go to the previous question
+//       setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
+
+//       // Show the changes for the previous question
+//       changes.filter(change => change.index === currentQuestionIndex - 1).forEach((change) => {
+//         if (change.type === 'highlight') {
+//           change.node.outerHTML = change.originalOuterHTML;
+//         }
+//       });
+//       localStorage.setItem('changes', JSON.stringify(changes));
+//   }
+// }
+
+
+function hideChanges() {
+  changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
+    if (change.type === 'highlight') {
+      change.node.outerHTML = change.node.textContent;
     }
-    // Hide the changes for the current question
-    changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-      if (change.type === 'highlight') {
-        change.node.outerHTML = change.node.textContent;
-      }
-    });
+  });
+}
 
-    // Go to the next question
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+function showChanges() {
+  console.log('showChanges');
+  console.log(changes.length);
+  changes.filter(change => change.index === currentQuestionIndex + 1).forEach((change) => {
+    if (change.type === 'highlight') {
+    handleReHighlight(change.node, change.color, change.range);
+    }
+  });
+  localStorage.setItem('changes', JSON.stringify(changes));
+}
 
-    // Show the changes for the next question
-    changes.filter(change => change.index === currentQuestionIndex + 1).forEach((change) => {
-      if (change.type === 'highlight') {
-        change.node.outerHTML = change.originalOuterHTML;
-      }
-    });
-    localStorage.setItem('changes', JSON.stringify(changes));
+function goToNextQuestion() {
+  console.log('Hello world!');
+  if (currentQuestionIndex === questions.length - 1) {
+    return;
   }
+  hideChanges();
+  setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+  showChanges();
+}
 
-  function goToPreviousQuestion() {
-    if (currentQuestionIndex > 0) {
-      // Hide the changes for the current question
-      changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-        if (change.type === 'highlight') {
-          change.node.outerHTML = change.node.textContent;
-        }
-      });
-
-      // Go to the previous question
-      setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
-
-      // Show the changes for the previous question
-      changes.filter(change => change.index === currentQuestionIndex - 1).forEach((change) => {
-        if (change.type === 'highlight') {
-          change.node.outerHTML = change.originalOuterHTML;
-        }
-      });
-      localStorage.setItem('changes', JSON.stringify(changes));
+function goToPreviousQuestion() {
+  if (currentQuestionIndex > 0) {
+    hideChanges();
+    setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
+    showChanges();
   }
 }
 
@@ -109,6 +159,15 @@ function handleBox() {
   }
 }
 
+function handleReHighlight(mark, prevColor, range) {
+  //print in handleReHighlight
+  console.log('handleReHighlight');
+  mark.style.backgroundColor = prevColor;
+  mark.appendChild(range.extractContents());
+  range.insertNode(mark);
+}
+
+
 
 function handleHighlight() {
 
@@ -121,11 +180,11 @@ function handleHighlight() {
     if (!selection.rangeCount) return;
     let range = selection.getRangeAt(0);
     let mark = document.createElement('mark');
-    const originalOuterHTML = mark.outerHTML;
     mark.style.backgroundColor = highlightColor;
+    const prevColor = mark.style.backgroundColor;
     mark.appendChild(range.extractContents());
     range.insertNode(mark);
-    setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark, originalOuterHTML, index: currentQuestionIndex }]);
+    setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark, range: range, color: prevColor, index: currentQuestionIndex }]);
     localStorage.setItem('changes', JSON.stringify(changes));
     if (window.getSelection) {
       if (window.getSelection().empty) {  // Chrome
@@ -189,6 +248,7 @@ function handleClickLine(event) {
 // while and checking index
 function handleUndo() {
   // Get the changes for the current page
+  const undoButton = document.getElementById('undoButton');
   const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
   if (currentPageChanges.length === 0) return;
   else if (currentPageChanges.length > 0) {
@@ -252,7 +312,7 @@ return (
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleUndo}>Undo</button>
+          <button id="undoButton" onClick={handleUndo}>Undo</button>
           <button onClick={handleReset}>Reset All</button>
         </div>
         <div style={{ marginTop: 'auto' }}>
