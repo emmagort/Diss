@@ -39,86 +39,22 @@ export default function Student() {
   }, [changes, currentQuestionIndex]);
 
 
-//   function goToNextQuestion() {
-//     if (currentQuestionIndex === questions.length - 1) {
-//       return;
-//     }
-//     // Hide the changes for the current question
-//     changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-//       if (change.type === 'highlight') {
-//         change.node.outerHTML = change.node.textContent;
-//       }
-//     });
-
-//     // Go to the next question
-//     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-
-//     // Show the changes for the next question
-//     changes.filter(change => change.index === currentQuestionIndex + 1).forEach((change) => {
-//       if (change.type === 'highlight') {
-//         change.node.outerHTML = change.originalOuterHTML;
-//       }
-//     });
-//     localStorage.setItem('changes', JSON.stringify(changes));
-//   }
-
-//   function goToPreviousQuestion() {
-//     if (currentQuestionIndex > 0) {
-//       // Hide the changes for the current question
-//       changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-//         if (change.type === 'highlight') {
-//           change.node.outerHTML = change.node.textContent;
-//         }
-//       });
-
-//       // Go to the previous question
-//       setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
-
-//       // Show the changes for the previous question
-//       changes.filter(change => change.index === currentQuestionIndex - 1).forEach((change) => {
-//         if (change.type === 'highlight') {
-//           change.node.outerHTML = change.originalOuterHTML;
-//         }
-//       });
-//       localStorage.setItem('changes', JSON.stringify(changes));
-//   }
-// }
-
-
-function hideChanges() {
-  changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-    if (change.type === 'highlight') {
-      change.node.outerHTML = change.node.textContent;
-    }
-  });
-}
-
-function showChanges() {
-  console.log('showChanges');
-  console.log(changes.length);
-  changes.filter(change => change.index === currentQuestionIndex + 1).forEach((change) => {
-    if (change.type === 'highlight') {
-    handleReHighlight(change.node, change.color, change.range);
-    }
-  });
-  localStorage.setItem('changes', JSON.stringify(changes));
-}
-
 function goToNextQuestion() {
   console.log('Hello world!');
   if (currentQuestionIndex === questions.length - 1) {
     return;
   }
-  hideChanges();
+  console.log(questions[currentQuestionIndex]['changes'].length);
+  //hideChanges();
   setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-  showChanges();
+  //showChanges("next");
 }
 
 function goToPreviousQuestion() {
   if (currentQuestionIndex > 0) {
-    hideChanges();
+    //hideChanges();
     setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
-    showChanges();
+    //showChanges("prev");
   }
 }
 
@@ -159,33 +95,49 @@ function handleBox() {
   }
 }
 
-function handleReHighlight(mark, prevColor, range) {
-  //print in handleReHighlight
-  console.log('handleReHighlight');
-  mark.style.backgroundColor = prevColor;
-  mark.appendChild(range.extractContents());
-  range.insertNode(mark);
-}
-
 
 
 function handleHighlight() {
-
   const selection = window.getSelection();
-  const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
+  const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
+
   if (alreadyClicked) {
     return;
   }
+
   if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
+    console.log(selection.toString());
     let range = selection.getRangeAt(0);
+    let rangeData = {
+      startContainer: range.startContainer,
+      startOffset: range.startOffset,
+      endContainer: range.endContainer,
+      endOffset: range.endOffset
+    }
+
     let mark = document.createElement('mark');
     mark.style.backgroundColor = highlightColor;
     const prevColor = mark.style.backgroundColor;
     mark.appendChild(range.extractContents());
     range.insertNode(mark);
-    setChanges(prevChanges => [...prevChanges, { type: 'highlight', node: mark, range: range, color: prevColor, index: currentQuestionIndex }]);
-    localStorage.setItem('changes', JSON.stringify(changes));
+
+    // const newChange = { type: 'highlight', node: mark, range: rangeData, color: prevColor };
+    const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
+
+    // Update the currentQuestion with the new change
+    setQuestions(prevQuestions => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+      };
+      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+      console.log(document.getElementById('questionContent').innerHTML);
+      return updatedQuestions;
+    });
+
+    // Clear the selection
     if (window.getSelection) {
       if (window.getSelection().empty) {  // Chrome
         window.getSelection().empty();
@@ -197,6 +149,7 @@ function handleHighlight() {
     }
   }
 }
+
 
 
 function handleClickWord(event) {
@@ -245,14 +198,12 @@ function handleClickLine(event) {
   }
 }
 
-// while and checking index
+
+
 function handleUndo() {
-  // Get the changes for the current page
-  const undoButton = document.getElementById('undoButton');
-  const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
-  if (currentPageChanges.length === 0) return;
-  else if (currentPageChanges.length > 0) {
-    const lastChange = currentPageChanges[currentPageChanges.length - 1];
+  // Check if the current question has changes
+  if (questions[currentQuestionIndex]['changes'].length > 0) {
+    const lastChange = currentQuestion.changes[currentQuestion.changes.length - 1];
 
     if (lastChange.type === 'highlight') {
       lastChange.node.outerHTML = lastChange.node.innerHTML;
@@ -260,24 +211,38 @@ function handleUndo() {
     else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine' || lastChange.type === 'box') {
       lastChange.node.style.border = 'none';
     }
-    const newChanges = changes.filter(change => change !== lastChange);
-    setChanges(newChanges);
+
+    // Update the currentQuestion by removing the last change
+    setQuestions(prevQuestions => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        changes: currentQuestion.changes.slice(0, -1) // Remove the last change
+      };
+      return updatedQuestions;
+    });
   }
 }
 
-function handleReset() {
-  changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-    if (change.type === 'highlight') {
-      change.node.outerHTML = change.node.innerHTML;
-    }
-    else if (change.type === 'clickWord' || change.type === 'clickLine' || change.type === 'box') {
-      change.node.style.border = 'none';
-    }
-  });
 
-  // Filter out the changes for the current question
-  const newChanges = changes.filter(change => change.index !== currentQuestionIndex);
-  setChanges(newChanges);
+
+function handleReset() {
+  // changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
+  //   if (change.type === 'highlight') {
+  //     change.node.outerHTML = change.node.innerHTML;
+  //   }
+  //   else if (change.type === 'clickWord' || change.type === 'clickLine' || change.type === 'box') {
+  //     change.node.style.border = 'none';
+  //   }
+  // });
+
+  // // Filter out the changes for the current question
+  // const newChanges = changes.filter(change => change.index !== currentQuestionIndex);
+  // setChanges(newChanges);
+  // console.log(questions[currentQuestionIndex].content);
+  
+  document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
+  questions[currentQuestionIndex]['render'] = '';
 }
 
 function checkAnswer(index) {
@@ -297,7 +262,7 @@ return (
     <div >
     <div>
       <h2 className='question-title'>{currentQuestion.title}</h2>
-      <p  onMouseUp={
+      {/* <p  id="questionContent" onMouseUp={
         currentQuestion.style === 'highlight' ? handleHighlight :
           currentQuestion.style === 'box' ? handleBox :
             currentQuestion.style === 'clickWord' ? handleClickWord :
@@ -305,7 +270,20 @@ return (
       }
         style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}>
         {currentQuestion.content}
-      </p>
+        
+        {currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render}
+      </p> */}
+
+<p id="questionContent" onMouseUp={
+    currentQuestion.style === 'highlight' ? handleHighlight :
+    currentQuestion.style === 'box' ? handleBox :
+    currentQuestion.style === 'clickWord' ? handleClickWord :
+    handleClickLine
+}
+style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render }}
+/>
+
       </div>
       <div className="button-container" style={{ alignItems: 'left' }}>
         <button className='inreractive-button' onClick={() => checkAnswer(currentQuestionIndex)}>Check Answer</button>

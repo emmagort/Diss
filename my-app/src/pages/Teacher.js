@@ -7,7 +7,7 @@ export default function Teacher() {
   const [content, setContent] = useState(localStorage.getItem('content') || '');
   const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' });
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' , changes: [], render: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
