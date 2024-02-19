@@ -6,7 +6,7 @@ import './Student.css';
 export default function Student() {
   const location = useLocation();
   const { answer } = location.state;
-  const [highlightColor, setHighlightColor] = useState('#FFD700');
+  const [highlightColor, setHighlightColor] = useState('#FDDF7E');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
@@ -329,7 +329,10 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
           {colors.map((color, index) => (
             <label key={index}>
               <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
-              <span style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}></span>
+              <span
+              style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}
+              className={highlightColor === color ? 'selected' : ''}
+              ></span>
             </label>
           ))}
         </label>
