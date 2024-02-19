@@ -27,16 +27,16 @@ export default function Student() {
   }, []);
 
 
-  useEffect(() => {
-    // Get the undo button
-    const undoButton = document.getElementById('undoButton');
+  // useEffect(() => {
+  //   // Get the undo button
+  //   const undoButton = document.getElementById('undoButton');
   
-    // Get the changes for the current page
-    const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
+  //   // Get the changes for the current page
+  //   const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
   
-    // Disable the undo button if there are no changes for the current page, enable it otherwise
-    undoButton.disabled = currentPageChanges.length === 0;
-  }, [changes, currentQuestionIndex]);
+  //   // Disable the undo button if there are no changes for the current page, enable it otherwise
+  //   undoButton.disabled = currentPageChanges.length === 0;
+  // }, [changes, currentQuestionIndex]);
 
 
 function goToNextQuestion() {
@@ -181,6 +181,7 @@ function handleClickWord(event) {
   selection.modify('extend', 'forward', 'word');
 
   if (selection.toString().trim() !== '') {
+    const text = selection.toString();
     const span = document.createElement('span');
     span.style.border = `2px solid ${highlightColor}`;
     const prevColor = highlightColor;
@@ -188,7 +189,7 @@ function handleClickWord(event) {
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
     //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
-    const newChange = { type: 'clickWord', color: prevColor };
+    const newChange = { type: 'clickWord', color: prevColor, content: text};
     setQuestions(prevQuestions => {
       const updatedQuestions = [...prevQuestions];
       updatedQuestions[currentQuestionIndex] = {
@@ -216,6 +217,7 @@ function handleClickLine(event) {
   selection.modify('extend', 'forward', 'lineboundary');
 
   if (selection.toString().trim() !== '') {
+    const text = selection.toString();
     const span = document.createElement('span');
     span.style.border = `2px solid ${highlightColor}`;
     const prevColor = highlightColor;
@@ -223,7 +225,7 @@ function handleClickLine(event) {
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
     //setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
-    const newChange = { type: 'clickLine', color: prevColor };
+    const newChange = { type: 'clickLine', color: prevColor, content: text};
     setQuestions(prevQuestions => {
       const updatedQuestions = [...prevQuestions];
       updatedQuestions[currentQuestionIndex] = {
@@ -237,69 +239,61 @@ function handleClickLine(event) {
   }
 }
 
+ // Not using at least for now - maybe ever
 
+// function handleUndo() {
+//   // Check if the current question has changes
+//   if (questions[currentQuestionIndex]['changes'].length > 0) {
+//     const lastChange = currentQuestion.changes[currentQuestion.changes.length - 1];
 
-function handleUndo() {
-  // Check if the current question has changes
-  if (questions[currentQuestionIndex]['changes'].length > 0) {
-    const lastChange = currentQuestion.changes[currentQuestion.changes.length - 1];
+//     if (lastChange.type === 'highlight') {
+//       lastChange.node.outerHTML = lastChange.node.innerHTML;
+//     }
+//     else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine' || lastChange.type === 'box') {
+//       lastChange.node.style.border = 'none';
+//     }
 
-    if (lastChange.type === 'highlight') {
-      lastChange.node.outerHTML = lastChange.node.innerHTML;
-    }
-    else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine' || lastChange.type === 'box') {
-      lastChange.node.style.border = 'none';
-    }
-
-    // Update the currentQuestion by removing the last change
-    setQuestions(prevQuestions => {
-      const updatedQuestions = [...prevQuestions];
-      updatedQuestions[currentQuestionIndex] = {
-        ...currentQuestion,
-        changes: currentQuestion.changes.slice(0, -1) // Remove the last change
-      };
-      return updatedQuestions;
-    });
-  }
-}
+//     // Update the currentQuestion by removing the last change
+//     setQuestions(prevQuestions => {
+//       const updatedQuestions = [...prevQuestions];
+//       updatedQuestions[currentQuestionIndex] = {
+//         ...currentQuestion,
+//         changes: currentQuestion.changes.slice(0, -1) // Remove the last change
+//       };
+//       return updatedQuestions;
+//     });
+//   }
+// }
 
 
 
 function handleReset() {
-
-  
   document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
   questions[currentQuestionIndex]['render'] = '';
+  questions[currentQuestionIndex]['changes'] = [];
 }
 
-function checkAnswer(index) {
-  const currentQuestion = questions[index];
-  // if (!currentQuestion) return;
-  const studentAnswer = window.getSelection().toString();
-  if (studentAnswer.trim() !== '') {
-    if (studentAnswer === currentQuestion.answer) {
-      alert('Correct!');
-    }
+
+function checkAnswer() {
+  const currentQuestion = questions[currentQuestionIndex];
+  const answer = currentQuestion.answer.replace(/[\s.,!?]/g, '');
+  const changes = currentQuestion.changes;
+  console.log(changes);
+  let correct = false;
+  if (changes.length === 0) {
+    correct = false;
+  } else {
+    correct = changes.every(change => answer.includes(change.content.replace(/[\s.,!?]/g, '')));
   }
-}
 
+  console.log(correct);
+}
 
 return (
   <div className="game-container">
     <div >
     <div>
       <h2 className='question-title'>{currentQuestion.title}</h2>
-      {/* <p  id="questionContent" onMouseUp={
-        currentQuestion.style === 'highlight' ? handleHighlight :
-          currentQuestion.style === 'box' ? handleBox :
-            currentQuestion.style === 'clickWord' ? handleClickWord :
-              handleClickLine
-      }
-        style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}>
-        {currentQuestion.content}
-        
-        {currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render}
-      </p> */}
 
 <p id="questionContent" onMouseUp={
     currentQuestion.style === 'highlight' ? handleHighlight :
@@ -313,11 +307,11 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
 
       </div>
       <div className="button-container" style={{ alignItems: 'left' }}>
-        <button className='inreractive-button' onClick={() => checkAnswer(currentQuestionIndex)}>Check Answer</button>
+        <button className='inreractive-button' onClick={() => checkAnswer()}>Check Answer</button>
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>
-          <button id="undoButton" onClick={handleUndo}>Undo</button>
+          {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
           <button onClick={handleReset}>Reset All</button>
         </div>
         <div style={{ marginTop: 'auto' }}>
