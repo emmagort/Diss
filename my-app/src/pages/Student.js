@@ -168,10 +168,22 @@ function handleClickWord(event) {
   if (selection.toString().trim() !== '') {
     const span = document.createElement('span');
     span.style.border = `2px solid ${highlightColor}`;
+    const prevColor = highlightColor;
     span.appendChild(document.createTextNode(selection.toString()));
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
-    setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
+    //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
+    const newChange = { type: 'clickWord', color: prevColor };
+    setQuestions(prevQuestions => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+      };
+      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+      console.log(document.getElementById('questionContent').innerHTML);
+      return updatedQuestions;
+    });
   }
 }
 
@@ -191,10 +203,22 @@ function handleClickLine(event) {
   if (selection.toString().trim() !== '') {
     const span = document.createElement('span');
     span.style.border = `2px solid ${highlightColor}`;
+    const prevColor = highlightColor;
     span.appendChild(document.createTextNode(selection.toString()));
     selection.getRangeAt(0).deleteContents();
     selection.getRangeAt(0).insertNode(span);
-    setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
+    //setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
+    const newChange = { type: 'clickLine', color: prevColor };
+    setQuestions(prevQuestions => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+      };
+      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+      console.log(document.getElementById('questionContent').innerHTML);
+      return updatedQuestions;
+    });
   }
 }
 
@@ -227,19 +251,7 @@ function handleUndo() {
 
 
 function handleReset() {
-  // changes.filter(change => change.index === currentQuestionIndex).forEach((change) => {
-  //   if (change.type === 'highlight') {
-  //     change.node.outerHTML = change.node.innerHTML;
-  //   }
-  //   else if (change.type === 'clickWord' || change.type === 'clickLine' || change.type === 'box') {
-  //     change.node.style.border = 'none';
-  //   }
-  // });
 
-  // // Filter out the changes for the current question
-  // const newChanges = changes.filter(change => change.index !== currentQuestionIndex);
-  // setChanges(newChanges);
-  // console.log(questions[currentQuestionIndex].content);
   
   document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
   questions[currentQuestionIndex]['render'] = '';
