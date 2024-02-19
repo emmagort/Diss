@@ -65,6 +65,7 @@ const currentQuestion = questions[currentQuestionIndex];
 function handleBox() {
   const selection = window.getSelection();
   if (selection.toString().trim() !== '') {
+    const text = selection.toString();
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
@@ -88,9 +89,21 @@ function handleBox() {
       newNode.style.height = `${rect.height}px`;
       newNode.style.border = `2px solid ${highlightColor}`;
       newNode.style.pointerEvents = 'none';
-      document.body.appendChild(newNode);
-      setChanges(prevChanges => [...prevChanges, { type: 'box', node: newNode, index: currentQuestionIndex }]);
-      localStorage.setItem('changes', JSON.stringify(changes));
+      const questionContainer = document.getElementById('questionContent');
+      questionContainer.appendChild(newNode);
+      const prevColor = highlightColor;
+      
+    const newChange = { type: 'box', color: prevColor, content: text};
+    setQuestions(prevQuestions => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[currentQuestionIndex] = {
+        ...currentQuestion,
+        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+      };
+      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+      console.log(document.getElementById('questionContent').innerHTML);
+      return updatedQuestions;
+    });
     }
   }
 }
@@ -107,6 +120,7 @@ function handleHighlight() {
 
   if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
+    const text = selection.toString();
     console.log(selection.toString());
     let range = selection.getRangeAt(0);
     let rangeData = {
@@ -123,7 +137,8 @@ function handleHighlight() {
     range.insertNode(mark);
 
     // const newChange = { type: 'highlight', node: mark, range: rangeData, color: prevColor };
-    const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
+    //const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
+    const newChange = { type: 'highlight', color: prevColor, content: text};
 
     // Update the currentQuestion with the new change
     setQuestions(prevQuestions => {
