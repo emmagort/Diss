@@ -11,7 +11,7 @@ export default function Student() {
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [graded, setGraded] = useState(false);
+
 
 
   useEffect(() => {
@@ -120,11 +120,11 @@ function handleHighlight() {
     return;
   }
   const selection = window.getSelection();
-  const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
+  //const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
 
-  if (alreadyClicked) {
-    return;
-  }
+  //if (alreadyClicked) {
+    //return;
+  //}
 
   if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
@@ -296,11 +296,15 @@ function showSolution() {
     console.log('in the if');
       document.getElementById('questionContent').innerHTML = studentAnswer;
       questions[currentQuestionIndex]['render'] = studentAnswer;
+      currentQuestion.showingSolution = false;
+      console.log(currentQuestion.showingSolution);
   }
   else {
     console.log('in the else');
       document.getElementById('questionContent').innerHTML = solution;
       questions[currentQuestionIndex]['render'] = solution;
+      currentQuestion.showingSolution = true;
+      console.log(currentQuestion.showingSolution);
   }
 }
 
@@ -340,7 +344,7 @@ return (
 <p id="questionContent" onMouseUp={
     currentQuestion.style === 'highlight' ? handleHighlight :
     currentQuestion.style === 'box' ? handleBox :
-    currentQuestion.style === 'clickWord' ? handleClickWord :
+    currentQuestion.style === 'clickword' ? handleClickWord :
     handleClickLine
 }
 style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
@@ -351,7 +355,8 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
       <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
       <div className="button-container" style={{ alignItems: 'left' }}>
         <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
-        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Solution/Question</button>
+        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button>
+        {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>

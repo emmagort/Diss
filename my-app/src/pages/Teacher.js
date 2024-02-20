@@ -12,7 +12,7 @@ export default function Teacher() {
   const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
   const [newAnswer, setNewAnswer] = useState('');
   // const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , points: '', score: '', graded: false, changes: [], render: ''});
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: '', studentAnswer: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: '', studentAnswer: '', showingSolution: false, points: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
@@ -23,23 +23,42 @@ export default function Teacher() {
     const reader = new FileReader();
 
     reader.onload = (event) => {
-      const blocks = event.target.result.split('\n----Style:');
+      const blocks = event.target.result.split('\n----Style');
       const questions = [];
       const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
 
+      // for (const block of blocks) {
+      //   if (block.trim() === '') continue;
+      //   const lines = block.split('\n');
+      //   const style = lines[0].split('----Style: ')[1].trim();
+      //   const title = lines[1].split('----Question: ')[1];
+      //   const content = lines[2].split('----Content: ')[1];
+      //   const answers = lines[3].split('----Answers: ')[1];
+      //   const solution = lines[3].split('----Solution: ')[1];
+      //   questions.push({ style, title, content, answers, solution});
       for (const block of blocks) {
         if (block.trim() === '') continue;
-
         const lines = block.split('\n');
-        const style = lines[0].split('----Style: ')[1];
-        const title = lines[1].split('----Question: ')[1];
-        const content = lines[2].split('----Content: ')[1];
-        const answers = lines[3].split('----Answers: ')[1].split(',');
-        const solution = lines[3].split('----Solution: ')[1];
-        //const points = lines[4].split('----Points: ')[1];
+        const styleLine = lines[0].split(': ');
+        const titleLine = lines[1].split('----Question: ');
+        const contentLine = lines[2].split('----Content: ');
+        const answersLine = lines[3].split('----Answers: ');
+        const solutionLine = lines[4].split('----Solution: ');
 
-        //questions.push({ style, title, content, answers, solution, points});
-        questions.push({ style, title, content, answers, solution});
+        if (styleLine[1] && titleLine[1] && contentLine[1] && answersLine[1] && solutionLine[1]) {
+          const style = styleLine[1].trim().toLowerCase();
+          const title = titleLine[1];
+          const content = contentLine[1];
+          const answers = answersLine[1].split('||');
+          const solution = solutionLine[1];
+          questions.push({ style, title, content, answers, solution });
+        }
+        else{
+          alert('Invalid file format');
+          console.log(styleLine[1], titleLine[1], contentLine[1], answersLine[1], solutionLine[1])
+          return;
+        
+        }
       }
       setQuestions([...existingQuestions, ...questions]);
     };
@@ -124,24 +143,6 @@ export default function Teacher() {
     setNewQuestion({ ...newQuestion, answers: [...newQuestion.answers, ''] });
   };
 
-  // function handleAddQuestion(e) {
-  //   if (!newQuestion.style || !newQuestion.title || !newQuestion.content || newQuestion.answers.length === 0 || !newQuestion.solution) {
-  //     alert("Please fill in all the fields before adding a question.");
-  //     return;
-  //   }
-  //   if (editingIndex !== null) {
-  //     setQuestions([...questions, newQuestion]);
-  //     setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
-  //     setEditingIndex(null);
-  //   }
-  //   else {
-  //     setQuestions([...questions, newQuestion]);
-  //   }
-  //   setAnswers([]);
-  //   setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
-  
-  // }
-
   function handleAddQuestion(e) {
     if (!newQuestion.style || !newQuestion.title || !newQuestion.content || newQuestion.answers.length === 0 || !newQuestion.solution) {
       alert("Please fill in all the fields before adding a question.");
@@ -219,12 +220,13 @@ export default function Teacher() {
           <option value="">Select style</option>
           <option value="box">Box</option>
           <option value="highlight">Highlight</option>
-          <option value="clickWord">Click Word</option>
-          <option value="clickLine">Click Line</option>
+          <option value="clickword">Click Word</option>
+          <option value="clickline">Click Line</option>
         </select>
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Content" />
         {newQuestion.answers.map((answer, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
           <textarea
             style={{ whiteSpace: 'pre-wrap' }}
             key={index}
@@ -233,6 +235,8 @@ export default function Teacher() {
             onChange={(e) => handleAnswerChange(e, index)}
             placeholder="New Answer"
           />
+          {!newQuestion.content.includes(answer) && <span style={{ color: 'red' }}>❗</span>}
+          </div>
         ))}
         <button onClick={handleAddAnswer}>Add another answer</button>
         <textarea name="solution" value={newQuestion.solution} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Solution" />
