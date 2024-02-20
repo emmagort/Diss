@@ -33,7 +33,7 @@ export default function Student() {
   //   const undoButton = document.getElementById('undoButton');
   
   //   // Get the changes for the current page
-  //   const currentPageChanges = changes.filter(change => change.index === currentQuestionIndex);
+  //   const currentPageChanges = changes.filaater(change => change.index === currentQuestionIndex);
   
   //   // Disable the undo button if there are no changes for the current page, enable it otherwise
   //   undoButton.disabled = currentPageChanges.length === 0;
@@ -64,6 +64,10 @@ const currentQuestion = questions[currentQuestionIndex];
 
 
 function handleBox() {
+
+  if (currentQuestion.graded === true) {
+    return;
+  }
   const selection = window.getSelection();
   if (selection.toString().trim() !== '') {
     const text = selection.toString();
@@ -112,6 +116,9 @@ function handleBox() {
 
 
 function handleHighlight() {
+  if (currentQuestion.graded === true) {
+    return;
+  }
   const selection = window.getSelection();
   const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
 
@@ -170,6 +177,10 @@ function handleHighlight() {
 
 function handleClickWord(event) {
 
+  if (currentQuestion.graded === true) {
+    return;
+  }
+
   const selection = window.getSelection();
   const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
   if (alreadyClicked) {
@@ -205,7 +216,9 @@ function handleClickWord(event) {
 }
 
 function handleClickLine(event) {
-
+  if (currentQuestion.graded === true) {
+    return;
+  }
   const selection = window.getSelection();
   const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
   if (alreadyClicked) {

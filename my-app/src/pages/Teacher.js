@@ -125,6 +125,10 @@ export default function Teacher() {
   };
 
   function handleAddQuestion(e) {
+    if (!newQuestion.style || !newQuestion.title || !newQuestion.content || newQuestion.answers.length === 0 || !newQuestion.solution) {
+      alert("Please fill in all the fields before adding a question.");
+      return;
+    }
     if (editingIndex !== null) {
       setQuestions([...questions, newQuestion]);
       setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
