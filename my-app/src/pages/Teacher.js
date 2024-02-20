@@ -235,7 +235,7 @@ export default function Teacher() {
             onChange={(e) => handleAnswerChange(e, index)}
             placeholder="New Answer"
           />
-          {!newQuestion.content.includes(answer) && <span style={{ color: 'red' }}>❗</span>}
+          {!newQuestion.content.includes(answer) && <span style={{ color: 'red' }} title = "This answer is not contained in the question content.">❗</span>}
           </div>
         ))}
         <button onClick={handleAddAnswer}>Add another answer</button>
