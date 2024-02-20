@@ -274,28 +274,63 @@ function handleReset() {
   questions[currentQuestionIndex]['changes'] = [];
 }
 
+function showSolution() {
+  const currentQuestion = questions[currentQuestionIndex];
+  const solution = currentQuestion.solution;
+  document.getElementById('questionContent').innerHTML = solution;
+  questions[currentQuestionIndex]['render'] = solution;
+}
+
+
+// function checkAnswer() {
+//   const currentQuestion = questions[currentQuestionIndex];
+//   const answer = currentQuestion.answer.replace(/[\s.,!?]/g, '');
+//   const changes = currentQuestion.changes;
+//   console.log(changes);
+//   let correct = false;
+//   if (changes.length === 0) {
+//     correct = false;
+//   } else {
+//     correct = changes.every(change => answer.includes(change.content.replace(/[\s.,!?]/g, '')));
+//   }
+
+//   if (correct) {
+//     currentQuestion.score = currentQuestion.points;
+//   } else {
+//     currentQuestion.score = 0;
+//   }
+//   currentQuestion.graded = true;
+
+//   console.log(correct);
+//   //showSolution();
+// }
+
 
 function checkAnswer() {
   const currentQuestion = questions[currentQuestionIndex];
-  const answer = currentQuestion.answer.replace(/[\s.,!?]/g, '');
+  const answers = (currentQuestion.answers||[]).map(ans => ans.replace(/[\s.,!?]/g, ''));
+  console.log(answers);
   const changes = currentQuestion.changes;
   console.log(changes);
-  let correct = false;
-  if (changes.length === 0) {
-    correct = false;
-  } else {
-    correct = changes.every(change => answer.includes(change.content.replace(/[\s.,!?]/g, '')));
-  }
 
-  if (correct) {
-    currentQuestion.score = currentQuestion.points;
-  } else {
-    currentQuestion.score = 0;
-  }
+  let score = 0;
+  changes.forEach(change => {
+    console.log(change.content.replace(/[\s.,!?]/g, ''));
+    if (answers.includes(change.content.replace(/[\s.,!?]/g, ''))) {
+      score += 1;
+    } else {
+      score -= 0.5;
+    }
+  });
+
+  currentQuestion.score = score;
   currentQuestion.graded = true;
 
-  console.log(correct);
+  console.log(score);
+  //showSolution();
 }
+
+
 
 return (
   <div className="game-container">
@@ -314,9 +349,10 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
 />
 
       </div>
-      <p>Score: {currentQuestion.score}/{currentQuestion.points}</p>
+      <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
       <div className="button-container" style={{ alignItems: 'left' }}>
         <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
+        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Show Solution</button>
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>

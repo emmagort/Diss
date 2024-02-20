@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react';
 export default function Teacher() {
   const [title, setTitle] = useState(localStorage.getItem('title') || '');
   const [content, setContent] = useState(localStorage.getItem('content') || '');
-  const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
-  const [points, setPoints] = useState(localStorage.getItem('points') || '');
+  //const [answers, setAnswers] = useState(JSON.parse(localStorage.getItem('answers')) || ['']);
+  const [solution, setSolution] = useState(localStorage.getItem('solution') || '');
+  // const [points, setPoints] = useState(localStorage.getItem('points') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' , points: '', score: '', graded: false, changes: [], render: ''});
+  const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
+  const [newAnswer, setNewAnswer] = useState('');
+  // const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , points: '', score: '', graded: false, changes: [], render: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
@@ -30,10 +34,12 @@ export default function Teacher() {
         const style = lines[0].split('----Style: ')[1];
         const title = lines[1].split('----Question: ')[1];
         const content = lines[2].split('----Content: ')[1];
-        const answer = lines[3].split('----Answer: ')[1];
-        const points = lines[4].split('----Points: ')[1];
+        const answers = lines[3].split('----Answers: ')[1].split(',');
+        const solution = lines[3].split('----Solution: ')[1];
+        //const points = lines[4].split('----Points: ')[1];
 
-        questions.push({ style, title, content, answer, points});
+        //questions.push({ style, title, content, answers, solution, points});
+        questions.push({ style, title, content, answers, solution});
       }
       setQuestions([...existingQuestions, ...questions]);
     };
@@ -89,19 +95,47 @@ export default function Teacher() {
 
 
   function handleInputChange(e) {
-    setNewQuestion({ ...newQuestion, [e.target.name]: e.target.value });
+    //setNewQuestion({ ...newQuestion, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'answers') {
+      value = value.split(','); // or another delimiter of your choice
+    }
+    setNewQuestion({ ...newQuestion, [e.target.name]: value });
   }
+
+  const handleAnswerChange = (e, index) => {
+    const newAnswers = [...newQuestion.answers];
+    newAnswers[index] = e.target.value;
+    setNewQuestion({ ...newQuestion, answers: newAnswers });
+  };
+
+  // function handleAddAnswer() {
+  //   setQuestions(prevQuestions => prevQuestions.map((question, index) => {
+  //     if (index === selectedQuestionIndex) {
+  //       return {...question, answers: [...question.answers, newAnswer]};
+  //     } else {
+  //       return question;
+  //     }
+  //   }));
+  //   setAnswers([]);
+  // }
+
+  const handleAddAnswer = () => {
+    setNewQuestion({ ...newQuestion, answers: [...newQuestion.answers, ''] });
+  };
 
   function handleAddQuestion(e) {
     if (editingIndex !== null) {
       setQuestions([...questions, newQuestion]);
-      setNewQuestion({ style: '', title: '', content: '', answer: '', points: ''});
+      setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
       setEditingIndex(null);
     }
     else {
       setQuestions([...questions, newQuestion]);
     }
-    setNewQuestion({ style: '', title: '', content: '', answer: '' , points: ''});
+    setAnswers([]);
+    setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
+  
   }
 
   const navigate = useNavigate();
@@ -109,14 +143,15 @@ export default function Teacher() {
   useEffect(() => {
     localStorage.setItem('title', title);
     localStorage.setItem('content', content);
-    localStorage.setItem('answer', answer);
-    localStorage.setItem('points', points);
-  }, [title, content, answer, points]);
+    localStorage.setItem('answers', answers);
+    localStorage.setItem('solution', solution);
+    //localStorage.setItem('points', points);
+  }, [title, content, answers]);
 
 
   function handleSubmit(e) {
     e.preventDefault();
-    navigate('/student', { state: { title, content, answer, points } });
+    navigate('/student', { state: { title, content, answers, solution } });
   }
 
   function handleEditQestion(index) {
@@ -142,8 +177,12 @@ export default function Teacher() {
           {selectedQuestionIndex === index && (
             <>
               <p style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>{question.content}</p>
-              <p>The answer is: {question.answer}</p>
+              {/* <p>The answers are: {question.answers}</p> */}
+              {/* //this needs to be multiple if there is more than 1 answer */}
+              <p>The answers are: {question.answers.join(', ')}</p>
               <p>The style is: {question.style}</p>
+              {/* <p>The points are: {question.points}</p> */}
+              <p>The solution is: {question.solution}</p>
               <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
               <button onClick={() => handleEditQestion(index)}>Edit Question</button>
             </>
@@ -161,8 +200,19 @@ export default function Teacher() {
         </select>
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Content" />
-        <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
-        <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" />
+        {newQuestion.answers.map((answer, index) => (
+          <textarea
+            style={{ whiteSpace: 'pre-wrap' }}
+            key={index}
+            name="answers"
+            value={answer}
+            onChange={(e) => handleAnswerChange(e, index)}
+            placeholder="New Answer"
+          />
+        ))}
+        <button onClick={handleAddAnswer}>Add another answer</button>
+        <textarea name="solution" value={newQuestion.solution} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Solution" />
+        {/* <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" /> */}
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
         <input type="file" onChange={handleImport} />
