@@ -291,31 +291,6 @@ function showSolution() {
   }
 }
 
-
-// function checkAnswer() {
-//   const currentQuestion = questions[currentQuestionIndex];
-//   const answer = currentQuestion.answer.replace(/[\s.,!?]/g, '');
-//   const changes = currentQuestion.changes;
-//   console.log(changes);
-//   let correct = false;
-//   if (changes.length === 0) {
-//     correct = false;
-//   } else {
-//     correct = changes.every(change => answer.includes(change.content.replace(/[\s.,!?]/g, '')));
-//   }
-
-//   if (correct) {
-//     currentQuestion.score = currentQuestion.points;
-//   } else {
-//     currentQuestion.score = 0;
-//   }
-//   currentQuestion.graded = true;
-
-//   console.log(correct);
-//   //showSolution();
-// }
-
-
 function checkAnswer() {
   const currentQuestion = questions[currentQuestionIndex];
   const answers = (currentQuestion.answers||[]).map(ans => ans.replace(/[\s.,!?]/g, ''));
