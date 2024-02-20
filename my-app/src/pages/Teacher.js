@@ -243,7 +243,7 @@ export default function Teacher() {
         {/* <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" /> */}
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
-        <input type="file" onChange={handleImport} />
+        {/* <input type="file" onChange={handleImport} /> */}
       </div>
       <div>
         <input type="file" onChange={handleImport} />
