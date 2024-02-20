@@ -6,8 +6,9 @@ export default function Teacher() {
   const [title, setTitle] = useState(localStorage.getItem('title') || '');
   const [content, setContent] = useState(localStorage.getItem('content') || '');
   const [answer, setAnswer] = useState(localStorage.getItem('answer') || '');
+  const [points, setPoints] = useState(localStorage.getItem('points') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' , changes: [], render: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answer: '' , points: '', score: '', graded: false, changes: [], render: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
@@ -30,8 +31,9 @@ export default function Teacher() {
         const title = lines[1].split('----Question: ')[1];
         const content = lines[2].split('----Content: ')[1];
         const answer = lines[3].split('----Answer: ')[1];
+        const points = lines[4].split('----Points: ')[1];
 
-        questions.push({ style, title, content, answer });
+        questions.push({ style, title, content, answer, points});
       }
       setQuestions([...existingQuestions, ...questions]);
     };
@@ -93,13 +95,13 @@ export default function Teacher() {
   function handleAddQuestion(e) {
     if (editingIndex !== null) {
       setQuestions([...questions, newQuestion]);
-      setNewQuestion({ style: '', title: '', content: '', answer: '' });
+      setNewQuestion({ style: '', title: '', content: '', answer: '', points: ''});
       setEditingIndex(null);
     }
     else {
       setQuestions([...questions, newQuestion]);
     }
-    setNewQuestion({ style: '', title: '', content: '', answer: '' });
+    setNewQuestion({ style: '', title: '', content: '', answer: '' , points: ''});
   }
 
   const navigate = useNavigate();
@@ -108,12 +110,13 @@ export default function Teacher() {
     localStorage.setItem('title', title);
     localStorage.setItem('content', content);
     localStorage.setItem('answer', answer);
-  }, [title, content, answer]);
+    localStorage.setItem('points', points);
+  }, [title, content, answer, points]);
 
 
   function handleSubmit(e) {
     e.preventDefault();
-    navigate('/student', { state: { title, content, answer } });
+    navigate('/student', { state: { title, content, answer, points } });
   }
 
   function handleEditQestion(index) {
@@ -159,6 +162,7 @@ export default function Teacher() {
         <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Content" />
         <input name="answer" value={newQuestion.answer} onChange={handleInputChange} placeholder="Answer" />
+        <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" />
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
         <input type="file" onChange={handleImport} />

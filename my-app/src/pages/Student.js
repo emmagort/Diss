@@ -11,6 +11,7 @@ export default function Student() {
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [graded, setGraded] = useState(false);
 
 
   useEffect(() => {
@@ -286,6 +287,13 @@ function checkAnswer() {
     correct = changes.every(change => answer.includes(change.content.replace(/[\s.,!?]/g, '')));
   }
 
+  if (correct) {
+    currentQuestion.score = currentQuestion.points;
+  } else {
+    currentQuestion.score = 0;
+  }
+  currentQuestion.graded = true;
+
   console.log(correct);
 }
 
@@ -306,13 +314,14 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
 />
 
       </div>
+      <p>Score: {currentQuestion.score}/{currentQuestion.points}</p>
       <div className="button-container" style={{ alignItems: 'left' }}>
-        <button className='inreractive-button' onClick={() => checkAnswer()}>Check Answer</button>
+        <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>
           {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
-          <button onClick={handleReset}>Reset All</button>
+          <button onClick={handleReset}disabled ={currentQuestion.graded}>Reset All</button>
         </div>
         <div style={{ marginTop: 'auto' }}>
           <button onClick={goToPreviousQuestion}>Previous Question</button>
