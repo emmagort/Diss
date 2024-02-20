@@ -12,7 +12,7 @@ export default function Teacher() {
   const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
   const [newAnswer, setNewAnswer] = useState('');
   // const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , points: '', score: '', graded: false, changes: [], render: ''});
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: '', studentAnswer: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');

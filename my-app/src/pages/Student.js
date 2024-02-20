@@ -274,11 +274,21 @@ function handleReset() {
   questions[currentQuestionIndex]['changes'] = [];
 }
 
+
 function showSolution() {
   const currentQuestion = questions[currentQuestionIndex];
   const solution = currentQuestion.solution;
-  document.getElementById('questionContent').innerHTML = solution;
-  questions[currentQuestionIndex]['render'] = solution;
+  const studentAnswer = currentQuestion.studentAnswer;
+  if (document.getElementById('questionContent').innerHTML === solution){
+    console.log('in the if');
+      document.getElementById('questionContent').innerHTML = studentAnswer;
+      questions[currentQuestionIndex]['render'] = studentAnswer;
+  }
+  else {
+    console.log('in the else');
+      document.getElementById('questionContent').innerHTML = solution;
+      questions[currentQuestionIndex]['render'] = solution;
+  }
 }
 
 
@@ -327,6 +337,7 @@ function checkAnswer() {
   currentQuestion.graded = true;
 
   console.log(score);
+  currentQuestion.studentAnswer = document.getElementById('questionContent').innerHTML;
   //showSolution();
 }
 
@@ -352,7 +363,7 @@ dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuesti
       <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
       <div className="button-container" style={{ alignItems: 'left' }}>
         <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
-        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Show Solution</button>
+        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Solution/Question</button>
       </div>
       <div className="interaction-controls">
         <div style={{ marginTop: 'auto' }}>
