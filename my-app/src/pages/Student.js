@@ -44,6 +44,8 @@ export default function Student() {
     setChanges(storedChanges);
   }, []);
 
+  
+
 
   // useEffect(() => {
   //   // Get the undo button
@@ -143,6 +145,7 @@ export default function Student() {
         const startRect = startRange.getBoundingClientRect();
 
         const newNode = document.createElement('div');
+        newNode.className = 'box';
         newNode.style.position = 'absolute';
 
         // Get the parent container

@@ -129,6 +129,10 @@ export default function Teacher() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (questions.length === 0) {
+      alert("Please create at least one question before submitting.");
+      return;
+    }
     navigate('/student', { state: { title, content, answers, solution } });
   }
 
