@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { useLocation } from 'react-router-dom';
 import 'prismjs/themes/prism.css';
 import './Student.css';
@@ -12,12 +12,29 @@ export default function Student() {
   const [changes, setChanges] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
+  // const newNode = useRef(null);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     // Update the position of the box based on the new window dimensions
+  //     if (newNode.current) {
+  //     const updatedRect = newNode.getBoundingClientRect();
+  //     newNode.style.left = `${updatedRect.left - 5}px`;
+  //     newNode.style.top = `${updatedRect.top}px`;
+  //     }
+  //   };
 
+  //   window.addEventListener('resize', handleResize);
+
+  //   return () => {
+  //     // Clean up the event listener when the component unmounts
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, []);
 
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
   }, [questions]);
-  
+
   useEffect(() => {
     localStorage.setItem('changes', JSON.stringify(changes));
   }, [changes]);
@@ -31,334 +48,413 @@ export default function Student() {
   // useEffect(() => {
   //   // Get the undo button
   //   const undoButton = document.getElementById('undoButton');
-  
+
   //   // Get the changes for the current page
   //   const currentPageChanges = changes.filaater(change => change.index === currentQuestionIndex);
-  
+
   //   // Disable the undo button if there are no changes for the current page, enable it otherwise
   //   undoButton.disabled = currentPageChanges.length === 0;
   // }, [changes, currentQuestionIndex]);
 
 
-function goToNextQuestion() {
-  console.log('Hello world!');
-  if (currentQuestionIndex === questions.length - 1) {
-    return;
+  function goToNextQuestion() {
+    console.log('Hello world!');
+    if (currentQuestionIndex === questions.length - 1) {
+      return;
+    }
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
   }
-  console.log(questions[currentQuestionIndex]['changes'].length);
-  setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-}
 
-function goToPreviousQuestion() {
-  if (currentQuestionIndex > 0) {
-    setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
-  }
-}
-
-const currentQuestion = questions[currentQuestionIndex];
-
-
-
-function handleBox() {
-
-  if (currentQuestion.graded === true) {
-    return;
-  }
-  const selection = window.getSelection();
-  if (selection.toString().trim() !== '') {
-    const text = selection.toString();
-    if (selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-
-      const startRange = document.createRange();
-      startRange.setStart(range.startContainer, range.startOffset);
-      startRange.setEnd(range.startContainer, range.startOffset + 1);
-      const startRect = startRange.getBoundingClientRect();
-
-      const newNode = document.createElement('div');
-      newNode.style.position = 'absolute';
-      newNode.style.left = `${startRect.left - 5}px`;
-      newNode.style.top = `${rect.top}px`;
-      const width = rect.right - startRect.left;
-      if (width === rect.width) {
-        newNode.style.width = `${width + 15}px`;
-      }
-      else {
-        newNode.style.width = `${width + 5}px`;
-      }
-      newNode.style.height = `${rect.height}px`;
-      newNode.style.border = `2px solid ${highlightColor}`;
-      newNode.style.pointerEvents = 'none';
-      const questionContainer = document.getElementById('questionContent');
-      questionContainer.appendChild(newNode);
-      const prevColor = highlightColor;
-      
-    const newChange = { type: 'box', color: prevColor, content: text};
-    setQuestions(prevQuestions => {
-      const updatedQuestions = [...prevQuestions];
-      updatedQuestions[currentQuestionIndex] = {
-        ...currentQuestion,
-        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-      };
-      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-      console.log(document.getElementById('questionContent').innerHTML);
-      return updatedQuestions;
-    });
+  function goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
     }
   }
-}
+
+  const currentQuestion = questions[currentQuestionIndex];
 
 
 
-function handleHighlight() {
-  if (currentQuestion.graded === true) {
-    return;
+  function handleBox() {
+
+    if (currentQuestion.graded === true) {
+      return;
+    }
+    const selection = window.getSelection();
+    if (selection.toString().trim() !== '') {
+      const text = selection.toString();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        const startRange = document.createRange();
+        startRange.setStart(range.startContainer, range.startOffset);
+        startRange.setEnd(range.startContainer, range.startOffset + 1);
+        const startRect = startRange.getBoundingClientRect();
+
+        const newNode = document.createElement('div');
+        newNode.style.position = 'absolute';
+        newNode.style.left = `${startRect.left - 5}px`;
+        newNode.style.top = `${rect.top}px`;
+        const width = rect.right - startRect.left;
+        if (width === rect.width) {
+          newNode.style.width = `${width + 15}px`;
+        }
+        else {
+          newNode.style.width = `${width + 5}px`;
+        }
+        newNode.style.height = `${rect.height}px`;
+        newNode.style.border = `2px solid ${highlightColor}`;
+        newNode.style.pointerEvents = 'none';
+        const questionContainer = document.getElementById('questionContent');
+        questionContainer.appendChild(newNode);
+        const prevColor = highlightColor;
+
+        const newChange = { type: 'box', color: prevColor, content: text };
+        setQuestions(prevQuestions => {
+          const updatedQuestions = [...prevQuestions];
+          updatedQuestions[currentQuestionIndex] = {
+            ...currentQuestion,
+            changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+          };
+          questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+          console.log(document.getElementById('questionContent').innerHTML);
+          return updatedQuestions;
+        });
+      }
+    }
   }
-  const selection = window.getSelection();
-  //const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
 
-  //if (alreadyClicked) {
+
+  // function handleBox() {
+  //   if (currentQuestion.graded === true) {
+  //     return;
+  //   }
+  //   const selection = window.getSelection();
+  //   if (selection.toString().trim() !== '') {
+  //     const text = selection.toString();
+  //     if (selection.rangeCount > 0) {
+  //       const range = selection.getRangeAt(0);
+  //       const rect = range.getBoundingClientRect();
+
+  //       const startRange = document.createRange();
+  //       startRange.setStart(range.startContainer, range.startOffset);
+  //       startRange.setEnd(range.startContainer, range.startOffset + 1);
+  //       const startRect = startRange.getBoundingClientRect();
+
+  //       const newNode = document.createElement('div');
+  //       newNode.style.position = 'absolute';
+  //       newNode.style.left = `${startRect.left - 5}px`;
+  //       newNode.style.top = `${rect.top}px`;
+  //       const width = rect.right - startRect.left;
+  //       if (width === rect.width) {
+  //         newNode.style.width = `${width + 15}px`;
+  //       }
+  //       else {
+  //         newNode.style.width = `${width + 5}px`;
+  //       }
+  //       newNode.style.height = `${rect.height}px`;
+  //       newNode.style.border = `2px solid ${highlightColor}`;
+  //       newNode.style.pointerEvents = 'none';
+  //       const questionContainer = document.getElementById('questionContent');
+  //       questionContainer.appendChild(newNode);
+  //       const prevColor = highlightColor;
+
+  //       const newChange = { type: 'box', color: prevColor, content: text, node: newNode, range: range };
+  //       setQuestions(prevQuestions => {
+  //         const updatedQuestions = [...prevQuestions];
+  //         updatedQuestions[currentQuestionIndex] = {
+  //           ...currentQuestion,
+  //           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+  //         };
+  //         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+  //         console.log(document.getElementById('questionContent').innerHTML);
+  //         return updatedQuestions;
+  //       });
+
+  //       window.addEventListener('resize', () => {
+  //         const rect = newChange.range.getBoundingClientRect();
+  //         const startRange = document.createRange();
+  //         startRange.setStart(newChange.range.startContainer, newChange.range.startOffset);
+  //         startRange.setEnd(newChange.range.startContainer, newChange.range.startOffset + 1);
+  //         const startRect = startRange.getBoundingClientRect();
+  //         newChange.node.style.left = `${startRect.left - 5}px`;
+  //         newChange.node.style.top = `${rect.top}px`;
+  //         const width = rect.right - startRect.left;
+  //         if (width === rect.width) {
+  //           newChange.node.style.width = `${width + 15}px`;
+  //         }
+  //         else {
+  //           newChange.node.style.width = `${width + 5}px`;
+  //         }
+  //         newChange.node.style.height = `${rect.height}px`;
+  //       });
+  //     }
+  //   }
+  // }
+
+
+
+
+  function handleHighlight() {
+    if (currentQuestion.graded === true) {
+      return;
+    }
+    const selection = window.getSelection();
+    //const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
+
+    //if (alreadyClicked) {
     //return;
-  //}
+    //}
 
-  if (selection.toString().trim() !== '') {
-    if (!selection.rangeCount) return;
-    const text = selection.toString();
+    if (selection.toString().trim() !== '') {
+      if (!selection.rangeCount) return;
+      const text = selection.toString();
+      // const changes = currentQuestion.changes;
+      // const alreadyHighlighted = changes.some(change => change.content === selection.toString());
+      // if (alreadyHighlighted) {
+      //   return;
+      // }
+
+      let range = selection.getRangeAt(0);
+      let rangeData = {
+        startContainer: range.startContainer,
+        startOffset: range.startOffset,
+        endContainer: range.endContainer,
+        endOffset: range.endOffset
+      }
+
+      let mark = document.createElement('mark');
+      mark.style.backgroundColor = highlightColor;
+      const prevColor = mark.style.backgroundColor;
+      mark.appendChild(range.extractContents());
+      range.insertNode(mark);
+
+      // const newChange = { type: 'highlight', node: mark, range: rangeData, color: prevColor };
+      //const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
+      const newChange = { type: 'highlight', color: prevColor, content: text };
+
+      // Update the currentQuestion with the new change
+      setQuestions(prevQuestions => {
+        const updatedQuestions = [...prevQuestions];
+        updatedQuestions[currentQuestionIndex] = {
+          ...currentQuestion,
+          changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+        };
+        questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+        console.log(document.getElementById('questionContent').innerHTML);
+        return updatedQuestions;
+      });
+
+      // Clear the selection
+      if (window.getSelection) {
+        if (window.getSelection().empty) {  // Chrome
+          window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  // Firefox
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {  // IE?
+        document.selection.empty();
+      }
+    }
+  }
+
+
+
+  function handleClickWord(event) {
+
+    if (currentQuestion.graded === true) {
+      return;
+    }
+
+    const selection = window.getSelection();
+
+    const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    selection.modify('move', 'backward', 'word');
+    selection.modify('extend', 'forward', 'word');
     // const changes = currentQuestion.changes;
-    // const alreadyHighlighted = changes.some(change => change.content === selection.toString());
-    // if (alreadyHighlighted) {
+    // const alreadyClicked = changes.some(change => change.content === selection.toString());
+    // if (alreadyClicked) {
     //   return;
     // }
-    
-    let range = selection.getRangeAt(0);
-    let rangeData = {
-      startContainer: range.startContainer,
-      startOffset: range.startOffset,
-      endContainer: range.endContainer,
-      endOffset: range.endOffset
-    }
 
-    let mark = document.createElement('mark');
-    mark.style.backgroundColor = highlightColor;
-    const prevColor = mark.style.backgroundColor;
-    mark.appendChild(range.extractContents());
-    range.insertNode(mark);
-
-    // const newChange = { type: 'highlight', node: mark, range: rangeData, color: prevColor };
-    //const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
-    const newChange = { type: 'highlight', color: prevColor, content: text};
-
-    // Update the currentQuestion with the new change
-    setQuestions(prevQuestions => {
-      const updatedQuestions = [...prevQuestions];
-      updatedQuestions[currentQuestionIndex] = {
-        ...currentQuestion,
-        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-      };
-      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-      console.log(document.getElementById('questionContent').innerHTML);
-      return updatedQuestions;
-    });
-
-    // Clear the selection
-    if (window.getSelection) {
-      if (window.getSelection().empty) {  // Chrome
-        window.getSelection().empty();
-      } else if (window.getSelection().removeAllRanges) {  // Firefox
-        window.getSelection().removeAllRanges();
-      }
-    } else if (document.selection) {  // IE?
-      document.selection.empty();
+    if (selection.toString().trim() !== '') {
+      const text = selection.toString();
+      const span = document.createElement('span');
+      span.style.border = `2px solid ${highlightColor}`;
+      const prevColor = highlightColor;
+      span.appendChild(document.createTextNode(selection.toString()));
+      selection.getRangeAt(0).deleteContents();
+      selection.getRangeAt(0).insertNode(span);
+      //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
+      const newChange = { type: 'clickWord', color: prevColor, content: text };
+      setQuestions(prevQuestions => {
+        const updatedQuestions = [...prevQuestions];
+        updatedQuestions[currentQuestionIndex] = {
+          ...currentQuestion,
+          changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+        };
+        questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+        console.log(document.getElementById('questionContent').innerHTML);
+        return updatedQuestions;
+      });
     }
   }
-}
 
+  function handleClickLine(event) {
+    if (currentQuestion.graded === true) {
+      return;
+    }
+    const selection = window.getSelection();
+    const range = document.caretRangeFromPoint(event.clientX, event.clientY);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    selection.modify('move', 'backward', 'lineboundary');
+    selection.modify('extend', 'forward', 'lineboundary');
 
+    // const changes = currentQuestion.changes;
+    // const alreadyClicked = changes.some(change => change.content === selection.toString());
+    // if (alreadyClicked) {
+    //   return;
+    // }
 
-function handleClickWord(event) {
-
-  if (currentQuestion.graded === true) {
-    return;
+    if (selection.toString().trim() !== '') {
+      const text = selection.toString();
+      const span = document.createElement('span');
+      span.style.border = `2px solid ${highlightColor}`;
+      const prevColor = highlightColor;
+      span.appendChild(document.createTextNode(selection.toString()));
+      selection.getRangeAt(0).deleteContents();
+      selection.getRangeAt(0).insertNode(span);
+      //setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
+      const newChange = { type: 'clickLine', color: prevColor, content: text };
+      setQuestions(prevQuestions => {
+        const updatedQuestions = [...prevQuestions];
+        updatedQuestions[currentQuestionIndex] = {
+          ...currentQuestion,
+          changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+        };
+        questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+        //console.log(document.getElementById('questionContent').innerHTML);
+        return updatedQuestions;
+      });
+    }
   }
 
-  const selection = window.getSelection();
- 
-  const range = document.caretRangeFromPoint(event.clientX, event.clientY);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  selection.modify('move', 'backward', 'word');
-  selection.modify('extend', 'forward', 'word');
-  // const changes = currentQuestion.changes;
-  // const alreadyClicked = changes.some(change => change.content === selection.toString());
-  // if (alreadyClicked) {
-  //   return;
-  // }
 
-  if (selection.toString().trim() !== '') {
-    const text = selection.toString();
-    const span = document.createElement('span');
-    span.style.border = `2px solid ${highlightColor}`;
-    const prevColor = highlightColor;
-    span.appendChild(document.createTextNode(selection.toString()));
-    selection.getRangeAt(0).deleteContents();
-    selection.getRangeAt(0).insertNode(span);
-    //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
-    const newChange = { type: 'clickWord', color: prevColor, content: text};
-    setQuestions(prevQuestions => {
-      const updatedQuestions = [...prevQuestions];
-      updatedQuestions[currentQuestionIndex] = {
-        ...currentQuestion,
-        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-      };
-      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-      console.log(document.getElementById('questionContent').innerHTML);
-      return updatedQuestions;
-    });
+  function handleReset() {
+    document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
+    questions[currentQuestionIndex]['render'] = '';
+    questions[currentQuestionIndex]['changes'] = [];
   }
-}
-
-function handleClickLine(event) {
-  if (currentQuestion.graded === true) {
-    return;
-  }
-  const selection = window.getSelection();
-  const range = document.caretRangeFromPoint(event.clientX, event.clientY);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  selection.modify('move', 'backward', 'lineboundary');
-  selection.modify('extend', 'forward', 'lineboundary');
-
-  // const changes = currentQuestion.changes;
-  // const alreadyClicked = changes.some(change => change.content === selection.toString());
-  // if (alreadyClicked) {
-  //   return;
-  // }
-
-  if (selection.toString().trim() !== '') {
-    const text = selection.toString();
-    const span = document.createElement('span');
-    span.style.border = `2px solid ${highlightColor}`;
-    const prevColor = highlightColor;
-    span.appendChild(document.createTextNode(selection.toString()));
-    selection.getRangeAt(0).deleteContents();
-    selection.getRangeAt(0).insertNode(span);
-    //setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
-    const newChange = { type: 'clickLine', color: prevColor, content: text};
-    setQuestions(prevQuestions => {
-      const updatedQuestions = [...prevQuestions];
-      updatedQuestions[currentQuestionIndex] = {
-        ...currentQuestion,
-        changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-      };
-      questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-      //console.log(document.getElementById('questionContent').innerHTML);
-      return updatedQuestions;
-    });
-  }
-}
 
 
-function handleReset() {
-  document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
-  questions[currentQuestionIndex]['render'] = '';
-  questions[currentQuestionIndex]['changes'] = [];
-}
-
-
-function showSolution() {
-  const currentQuestion = questions[currentQuestionIndex];
-  const solution = currentQuestion.solution;
-  const studentAnswer = currentQuestion.studentAnswer;
-  if (document.getElementById('questionContent').innerHTML === solution){
-    console.log('in the if');
+  function showSolution() {
+    const currentQuestion = questions[currentQuestionIndex];
+    const solution = currentQuestion.solution;
+    const studentAnswer = currentQuestion.studentAnswer;
+    if (document.getElementById('questionContent').innerHTML === solution) {
+      console.log('in the if');
       document.getElementById('questionContent').innerHTML = studentAnswer;
       questions[currentQuestionIndex]['render'] = studentAnswer;
       currentQuestion.showingSolution = false;
       console.log(currentQuestion.showingSolution);
-  }
-  else {
-    console.log('in the else');
+    }
+    else {
+      console.log('in the else');
       document.getElementById('questionContent').innerHTML = solution;
       questions[currentQuestionIndex]['render'] = solution;
       currentQuestion.showingSolution = true;
       console.log(currentQuestion.showingSolution);
-  }
-}
-
-function checkAnswer() {
-  const currentQuestion = questions[currentQuestionIndex];
-  const answers = (currentQuestion.answers||[]).map(ans => ans.replace(/[\s.,!?]/g, ''));
-  console.log(answers);
-  const changes = currentQuestion.changes;
-  console.log(changes);
-
-  let score = 0;
-  changes.forEach(change => {
-    console.log(change.content.replace(/[\s.,!?]/g, ''));
-    if (answers.includes(change.content.replace(/[\s.,!?]/g, ''))) {
-      score += 1;
-    } else {
-      score -= 0.5;
     }
-  });
+  }
 
-  currentQuestion.score = score;
-  currentQuestion.graded = true;
+  function checkAnswer() {
+    const currentQuestion = questions[currentQuestionIndex];
+    const answers = (currentQuestion.answers || []).map(ans => ans.replace(/[\s.,!?]/g, ''));
+    console.log(answers);
+    const changes = currentQuestion.changes;
+    console.log(changes);
 
-  console.log(score);
-  currentQuestion.studentAnswer = document.getElementById('questionContent').innerHTML;
-  setQuestions(prevQuestions => [...prevQuestions]); // Trigger re-render
-}
+    let score = 0;
+    changes.forEach(change => {
+      console.log(change.content.replace(/[\s.,!?]/g, ''));
+      if (answers.includes(change.content.replace(/[\s.,!?]/g, ''))) {
+        score += 1;
+      } else {
+        score -= 0.5;
+      }
+    });
+
+    currentQuestion.score = score;
+    currentQuestion.graded = true;
+
+    console.log(score);
+    currentQuestion.studentAnswer = document.getElementById('questionContent').innerHTML;
+    setQuestions(prevQuestions => [...prevQuestions]); // Trigger re-render
+  }
 
 
 
-return (
-  <div className="game-container">
-    <div >
-    <div>
-      <h2 className='question-title'>{currentQuestion.title}</h2>
+  return (
+    <div className="game-container">
+      <div >
+        <div>
+          <h2 className='question-title'>{currentQuestion.title}</h2>
 
-<p id="questionContent" onMouseUp={
-    currentQuestion.style === 'highlight' ? handleHighlight :
-    currentQuestion.style === 'box' ? handleBox :
-    currentQuestion.style === 'clickword' ? handleClickWord :
-    handleClickLine
-}
-style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
-dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render }}
-/>
-
-      </div>
-      <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
-      <div className="button-container" style={{ alignItems: 'left' }}>
-        <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
-        <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button>
-        {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
-      </div>
-      <div className="interaction-controls">
-        <div style={{ marginTop: 'auto' }}>
-          {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
-          <button onClick={handleReset}disabled ={currentQuestion.graded}>Reset All</button>
+          {currentQuestion.edited ? (
+            <p id="questionContent" onMouseUp={
+              currentQuestion.style === 'highlight' ? handleHighlight :
+                currentQuestion.style === 'box' ? handleBox :
+                  currentQuestion.style === 'clickword' ? handleClickWord :
+                    handleClickLine
+            }
+              style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+              dangerouslySetInnerHTML={{ __html: currentQuestion.render !== '' ? currentQuestion.render : currentQuestion.content }}
+            />
+          ) : (
+            <p id="questionContent" onMouseUp={
+              currentQuestion.style === 'highlight' ? handleHighlight :
+                currentQuestion.style === 'box' ? handleBox :
+                  currentQuestion.style === 'clickword' ? handleClickWord :
+                    handleClickLine
+            }
+              style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+              dangerouslySetInnerHTML={{ __html: currentQuestion.content }}
+            />
+          )}
         </div>
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={goToPreviousQuestion}>Previous Question</button>
-          <button onClick={goToNextQuestion}>Next Question</button>
+        <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
+        <div className="button-container" style={{ alignItems: 'left' }}>
+          <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
+          <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button>
+          {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
         </div>
+        <div className="interaction-controls">
+          <div style={{ marginTop: 'auto' }}>
+            {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
+            <button onClick={handleReset} disabled={currentQuestion.graded}>Reset All</button>
+          </div>
+          <div style={{ marginTop: 'auto' }}>
+            <button onClick={goToPreviousQuestion}>Previous Question</button>
+            <button onClick={goToNextQuestion}>Next Question</button>
+          </div>
 
-        <label className='color-selection'>
-          {colors.map((color, index) => (
-            <label key={index}>
-              <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
-              <span
-              style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}
-              className={highlightColor === color ? 'selected' : ''}
-              ></span>
-            </label>
-          ))}
-        </label>
+          <label className='color-selection'>
+            {colors.map((color, index) => (
+              <label key={index}>
+                <input type="radio" value={color} checked={highlightColor === color} onChange={(e) => setHighlightColor(e.target.value)} />
+                <span
+                  style={{ backgroundColor: color, display: 'inline-block', width: '20px', height: '20px' }}
+                  className={highlightColor === color ? 'selected' : ''}
+                ></span>
+              </label>
+            ))}
+          </label>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
