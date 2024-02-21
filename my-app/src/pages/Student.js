@@ -357,25 +357,30 @@ export default function Student() {
   }
 
 
-  function showSolution() {
+  function showSolution(currentQuestion, questionContent ) {
+    questionContent.innerHTML = currentQuestion.solution;
+    currentQuestion.showingSolution = true;
+  }
+
+  function showAnswer(currentQuestion, questionContent) {
+    questionContent.innerHTML = currentQuestion.studentAnswer;
+    currentQuestion.showingSolution = false;
+  }
+    
+
+  function handleChange(){
     const currentQuestion = questions[currentQuestionIndex];
-    const solution = currentQuestion.solution;
     const studentAnswer = currentQuestion.studentAnswer;
-    if (document.getElementById('questionContent').innerHTML === solution) {
-      console.log('in the if');
-      document.getElementById('questionContent').innerHTML = studentAnswer;
-      questions[currentQuestionIndex]['render'] = studentAnswer;
-      currentQuestion.showingSolution = false;
-      console.log(currentQuestion.showingSolution);
+    const questionContent = document.getElementById('questionContent');
+    //const questionContent = document.getElementById('questionContent');
+    if (currentQuestion.showingSolution === true){
+      showAnswer(currentQuestion, questionContent);
     }
-    else {
-      console.log('in the else');
-      document.getElementById('questionContent').innerHTML = solution;
-      questions[currentQuestionIndex]['render'] = solution;
-      currentQuestion.showingSolution = true;
-      console.log(currentQuestion.showingSolution);
+    else{
+      showSolution(currentQuestion, questionContent);
     }
   }
+  
 
   function checkAnswer() {
     const currentQuestion = questions[currentQuestionIndex];
@@ -435,7 +440,8 @@ export default function Student() {
         <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
         <div className="button-container" style={{ alignItems: 'left' }}>
           <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
-          <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button>
+          <button className='inreractive-button' onClick={handleChange} disabled={!currentQuestion.graded}>Question/Solution</button>
+          {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button> */}
           {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
         </div>
         <div className="interaction-controls">
