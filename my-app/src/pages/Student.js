@@ -75,59 +75,8 @@ export default function Student() {
 
 
 
-  function handleBox() {
-
-    if (currentQuestion.graded === true) {
-      return;
-    }
-    const selection = window.getSelection();
-    if (selection.toString().trim() !== '') {
-      const text = selection.toString();
-      if (selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-
-        const startRange = document.createRange();
-        startRange.setStart(range.startContainer, range.startOffset);
-        startRange.setEnd(range.startContainer, range.startOffset + 1);
-        const startRect = startRange.getBoundingClientRect();
-
-        const newNode = document.createElement('div');
-        newNode.style.position = 'absolute';
-        newNode.style.left = `${startRect.left - 5}px`;
-        newNode.style.top = `${rect.top}px`;
-        const width = rect.right - startRect.left;
-        if (width === rect.width) {
-          newNode.style.width = `${width + 15}px`;
-        }
-        else {
-          newNode.style.width = `${width + 5}px`;
-        }
-        newNode.style.height = `${rect.height}px`;
-        newNode.style.border = `2px solid ${highlightColor}`;
-        newNode.style.pointerEvents = 'none';
-        const questionContainer = document.getElementById('questionContent');
-        questionContainer.appendChild(newNode);
-        const prevColor = highlightColor;
-
-        const newChange = { type: 'box', color: prevColor, content: text };
-        setQuestions(prevQuestions => {
-          const updatedQuestions = [...prevQuestions];
-          updatedQuestions[currentQuestionIndex] = {
-            ...currentQuestion,
-            changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-          };
-          questions[currentQuestionIndex]['edited'] = true;
-          questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-          console.log(document.getElementById('questionContent').innerHTML);
-          return updatedQuestions;
-        });
-      }
-    }
-  }
-
-
   // function handleBox() {
+
   //   if (currentQuestion.graded === true) {
   //     return;
   //   }
@@ -161,38 +110,83 @@ export default function Student() {
   //       questionContainer.appendChild(newNode);
   //       const prevColor = highlightColor;
 
-  //       const newChange = { type: 'box', color: prevColor, content: text, node: newNode, range: range };
+  //       const newChange = { type: 'box', color: prevColor, content: text };
   //       setQuestions(prevQuestions => {
   //         const updatedQuestions = [...prevQuestions];
   //         updatedQuestions[currentQuestionIndex] = {
   //           ...currentQuestion,
   //           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
   //         };
+  //         questions[currentQuestionIndex]['edited'] = true;
   //         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
   //         console.log(document.getElementById('questionContent').innerHTML);
   //         return updatedQuestions;
   //       });
-
-  //       window.addEventListener('resize', () => {
-  //         const rect = newChange.range.getBoundingClientRect();
-  //         const startRange = document.createRange();
-  //         startRange.setStart(newChange.range.startContainer, newChange.range.startOffset);
-  //         startRange.setEnd(newChange.range.startContainer, newChange.range.startOffset + 1);
-  //         const startRect = startRange.getBoundingClientRect();
-  //         newChange.node.style.left = `${startRect.left - 5}px`;
-  //         newChange.node.style.top = `${rect.top}px`;
-  //         const width = rect.right - startRect.left;
-  //         if (width === rect.width) {
-  //           newChange.node.style.width = `${width + 15}px`;
-  //         }
-  //         else {
-  //           newChange.node.style.width = `${width + 5}px`;
-  //         }
-  //         newChange.node.style.height = `${rect.height}px`;
-  //       });
   //     }
   //   }
   // }
+
+  function handleBox() {
+    if (currentQuestion.graded === true) {
+      return;
+    }
+    const selection = window.getSelection();
+    if (selection.toString().trim() !== '') {
+      const text = selection.toString();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        const startRange = document.createRange();
+        startRange.setStart(range.startContainer, range.startOffset);
+        startRange.setEnd(range.startContainer, range.startOffset + 1);
+        const startRect = startRange.getBoundingClientRect();
+
+        const newNode = document.createElement('div');
+        newNode.style.position = 'absolute';
+
+        // Get the parent container
+        const container = document.getElementById('questionContent');
+        container.style.position = 'relative';
+
+        // Get the bounding rectangle of the parent container
+        const containerRect = container.getBoundingClientRect();
+
+        // Calculate the position of the box relative to the parent container
+        const left = startRect.left - containerRect.left;
+        const top = rect.top - containerRect.top;
+
+        newNode.style.left = `${left - 5}px`;
+        newNode.style.top = `${top}px`;
+        const width = rect.right - startRect.left;
+        if (width === rect.width) {
+          newNode.style.width = `${width + 15}px`;
+        }
+        else {
+          newNode.style.width = `${width + 5}px`;
+        }
+        newNode.style.height = `${rect.height}px`;
+        newNode.style.border = `2px solid ${highlightColor}`;
+        newNode.style.pointerEvents = 'none';
+        const questionContainer = document.getElementById('questionContent');
+        questionContainer.appendChild(newNode);
+        const prevColor = highlightColor;
+
+        const newChange = { type: 'box', color: prevColor, content: text };
+        setQuestions(prevQuestions => {
+          const updatedQuestions = [...prevQuestions];
+          updatedQuestions[currentQuestionIndex] = {
+            ...currentQuestion,
+            changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
+          };
+          questions[currentQuestionIndex]['edited'] = true;
+          questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+          console.log(document.getElementById('questionContent').innerHTML);
+          return updatedQuestions;
+        });
+      }
+    }
+  }
 
 
 
@@ -411,6 +405,11 @@ export default function Student() {
 
   return (
     <div className="game-container">
+    {/* // <div style ={{ paddingLeft: '20px',  */}
+    {/* // position: 'fixed', 
+    // width: '100%', 
+    // height: '100vh', 
+    // overflow: 'auto' }} > */}
       <div >
         <div>
           <h2 className='question-title'>{currentQuestion.title}</h2>

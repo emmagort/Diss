@@ -5,57 +5,14 @@ import { useEffect, useState } from 'react';
 export default function Teacher() {
   const [title, setTitle] = useState(localStorage.getItem('title') || '');
   const [content, setContent] = useState(localStorage.getItem('content') || '');
-  //const [answers, setAnswers] = useState(JSON.parse(localStorage.getItem('answers')) || ['']);
   const [solution, setSolution] = useState(localStorage.getItem('solution') || '');
-  // const [points, setPoints] = useState(localStorage.getItem('points') || '');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
   const [newAnswer, setNewAnswer] = useState('');
-  // const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , points: '', score: '', graded: false, changes: [], render: ''});
   const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, showingSolution: false, changes: [], render: '', studentAnswer: '', edited: false, points: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
-
-  // const handleImport = (event) => {
-
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = (event) => {
-  //     const blocks = event.target.result.split('\n----Style');
-  //     const questions = [];
-  //     const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
-
-  //     for (const block of blocks) {
-  //       if (block.trim() === '') continue;
-  //       const lines = block.split('\n');
-  //       const styleLine = lines[0].split(': ');
-  //       const titleLine = lines[1].split('----Question: ');
-  //       const contentLine = lines[2].split('----Content: ');
-  //       const answersLine = lines[3].split('----Answers: ');
-  //       const solutionLine = lines[4].split('----Solution: ');
-
-  //       if (styleLine[1] && titleLine[1] && contentLine[1] && answersLine[1] && solutionLine[1]) {
-  //         const style = styleLine[1].trim().toLowerCase();
-  //         const title = titleLine[1];
-  //         const content = contentLine[1];
-  //         const answers = answersLine[1].split('||');
-  //         const solution = solutionLine[1];
-  //         questions.push({ style, title, content, answers, solution });
-  //       }
-  //       else{
-  //         alert('Invalid file format');
-  //         console.log(styleLine[1], titleLine[1], contentLine[1], answersLine[1], solutionLine[1])
-  //         return;
-        
-  //       }
-  //     }
-  //     setQuestions([...existingQuestions, ...questions]);
-  //   };
-
-  //   reader.readAsText(file);
-  // };
 
 
   //trying to do this for json files
@@ -72,25 +29,6 @@ export default function Teacher() {
   
     reader.readAsText(file);
   };
-  
-
-  // const handleExport = (filename) => {
-  //   const content = questions.map(question =>
-  //     `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answers: ${question.answers.join('||')}\n----Solution: ${question.solution}\n\n`
-  //   ).join('\n');
-
-  //   const blob = new Blob([content], { type: 'text/plain' });
-  //   const url = URL.createObjectURL(blob);
-
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.download = filename;
-  //   link.click();
-
-  //   // Clean up
-  //   URL.revokeObjectURL(url);
-  //   link.remove();
-  // };
 
   const handleSave = () => {
     handleExport(filename);
@@ -153,16 +91,6 @@ export default function Teacher() {
     setNewQuestion({ ...newQuestion, answers: newAnswers });
   };
 
-  // function handleAddAnswer() {
-  //   setQuestions(prevQuestions => prevQuestions.map((question, index) => {
-  //     if (index === selectedQuestionIndex) {
-  //       return {...question, answers: [...question.answers, newAnswer]};
-  //     } else {
-  //       return question;
-  //     }
-  //   }));
-  //   setAnswers([]);
-  // }
 
   const handleAddAnswer = () => {
     setNewQuestion({ ...newQuestion, answers: [...newQuestion.answers, ''] });
