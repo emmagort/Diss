@@ -17,64 +17,80 @@ export default function Teacher() {
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
 
-  const handleImport = (event) => {
+  // const handleImport = (event) => {
 
+  //   const file = event.target.files[0];
+  //   const reader = new FileReader();
+
+  //   reader.onload = (event) => {
+  //     const blocks = event.target.result.split('\n----Style');
+  //     const questions = [];
+  //     const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
+
+  //     for (const block of blocks) {
+  //       if (block.trim() === '') continue;
+  //       const lines = block.split('\n');
+  //       const styleLine = lines[0].split(': ');
+  //       const titleLine = lines[1].split('----Question: ');
+  //       const contentLine = lines[2].split('----Content: ');
+  //       const answersLine = lines[3].split('----Answers: ');
+  //       const solutionLine = lines[4].split('----Solution: ');
+
+  //       if (styleLine[1] && titleLine[1] && contentLine[1] && answersLine[1] && solutionLine[1]) {
+  //         const style = styleLine[1].trim().toLowerCase();
+  //         const title = titleLine[1];
+  //         const content = contentLine[1];
+  //         const answers = answersLine[1].split('||');
+  //         const solution = solutionLine[1];
+  //         questions.push({ style, title, content, answers, solution });
+  //       }
+  //       else{
+  //         alert('Invalid file format');
+  //         console.log(styleLine[1], titleLine[1], contentLine[1], answersLine[1], solutionLine[1])
+  //         return;
+        
+  //       }
+  //     }
+  //     setQuestions([...existingQuestions, ...questions]);
+  //   };
+
+  //   reader.readAsText(file);
+  // };
+
+
+  //trying to do this for json files
+
+  const handleImport = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-
+  
     reader.onload = (event) => {
-      const blocks = event.target.result.split('\n----Style');
-      const questions = [];
+      const questions = JSON.parse(event.target.result);
       const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
-
-      for (const block of blocks) {
-        if (block.trim() === '') continue;
-        const lines = block.split('\n');
-        const styleLine = lines[0].split(': ');
-        const titleLine = lines[1].split('----Question: ');
-        const contentLine = lines[2].split('----Content: ');
-        const answersLine = lines[3].split('----Answers: ');
-        const solutionLine = lines[4].split('----Solution: ');
-
-        if (styleLine[1] && titleLine[1] && contentLine[1] && answersLine[1] && solutionLine[1]) {
-          const style = styleLine[1].trim().toLowerCase();
-          const title = titleLine[1];
-          const content = contentLine[1];
-          const answers = answersLine[1].split('||');
-          const solution = solutionLine[1];
-          questions.push({ style, title, content, answers, solution });
-        }
-        else{
-          alert('Invalid file format');
-          console.log(styleLine[1], titleLine[1], contentLine[1], answersLine[1], solutionLine[1])
-          return;
-        
-        }
-      }
       setQuestions([...existingQuestions, ...questions]);
     };
-
+  
     reader.readAsText(file);
   };
+  
 
+  // const handleExport = (filename) => {
+  //   const content = questions.map(question =>
+  //     `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answers: ${question.answers.join('||')}\n----Solution: ${question.solution}\n\n`
+  //   ).join('\n');
 
-  const handleExport = (filename) => {
-    const content = questions.map(question =>
-      `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answers: ${question.answers.join('||')}`
-    ).join('\n');
+  //   const blob = new Blob([content], { type: 'text/plain' });
+  //   const url = URL.createObjectURL(blob);
 
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = filename;
+  //   link.click();
 
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-
-    // Clean up
-    URL.revokeObjectURL(url);
-    link.remove();
-  };
+  //   // Clean up
+  //   URL.revokeObjectURL(url);
+  //   link.remove();
+  // };
 
   const handleSave = () => {
     handleExport(filename);
@@ -87,6 +103,24 @@ export default function Teacher() {
       handleExport(newFilename);
     }
   };
+
+// exporting  json file
+
+  const handleExport = (filename) => {
+    const content = JSON.stringify(questions);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+
+    // Clean up
+    URL.revokeObjectURL(url);
+    link.remove();
+  };
+
 
   const handleTitleClick = (index) => {
     if (selectedQuestionIndex === index) {

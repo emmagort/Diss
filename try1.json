@@ -1,0 +1,17 @@
+[
+    {
+      "style": "multiple choice",
+      "title": "Question 1",
+      "content": "What is 2 + 2?",
+      "answers": ["1", "2", "3", "4"],
+      "solution": "4"
+    },
+    {
+      "style": "true or false",
+      "title": "Question 2",
+      "content": "The sky is blue.",
+      "answers": ["True", "False"],
+      "solution": "True"
+    }
+  ]
+  
