@@ -45,17 +45,13 @@ function goToNextQuestion() {
   if (currentQuestionIndex === questions.length - 1) {
     return;
   }
-  //console.log(questions[currentQuestionIndex]['changes'].length);
-  //hideChanges();
+  console.log(questions[currentQuestionIndex]['changes'].length);
   setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-  //showChanges("next");
 }
 
 function goToPreviousQuestion() {
   if (currentQuestionIndex > 0) {
-    //hideChanges();
     setCurrentQuestionIndex((prevIndex) => prevIndex - 1);
-    //showChanges("prev");
   }
 }
 
@@ -129,7 +125,12 @@ function handleHighlight() {
   if (selection.toString().trim() !== '') {
     if (!selection.rangeCount) return;
     const text = selection.toString();
-    console.log(selection.toString());
+    // const changes = currentQuestion.changes;
+    // const alreadyHighlighted = changes.some(change => change.content === selection.toString());
+    // if (alreadyHighlighted) {
+    //   return;
+    // }
+    
     let range = selection.getRangeAt(0);
     let rangeData = {
       startContainer: range.startContainer,
@@ -182,15 +183,17 @@ function handleClickWord(event) {
   }
 
   const selection = window.getSelection();
-  const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
-  if (alreadyClicked) {
-    return;
-  }
+ 
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
   selection.removeAllRanges();
   selection.addRange(range);
   selection.modify('move', 'backward', 'word');
   selection.modify('extend', 'forward', 'word');
+  // const changes = currentQuestion.changes;
+  // const alreadyClicked = changes.some(change => change.content === selection.toString());
+  // if (alreadyClicked) {
+  //   return;
+  // }
 
   if (selection.toString().trim() !== '') {
     const text = selection.toString();
@@ -220,15 +223,17 @@ function handleClickLine(event) {
     return;
   }
   const selection = window.getSelection();
-  const alreadyClicked = changes.some(change => change.node.textContent === selection.toString());
-  if (alreadyClicked) {
-    return;
-  }
   const range = document.caretRangeFromPoint(event.clientX, event.clientY);
   selection.removeAllRanges();
   selection.addRange(range);
   selection.modify('move', 'backward', 'lineboundary');
   selection.modify('extend', 'forward', 'lineboundary');
+
+  // const changes = currentQuestion.changes;
+  // const alreadyClicked = changes.some(change => change.content === selection.toString());
+  // if (alreadyClicked) {
+  //   return;
+  // }
 
   if (selection.toString().trim() !== '') {
     const text = selection.toString();
@@ -247,38 +252,11 @@ function handleClickLine(event) {
         changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
       };
       questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-      console.log(document.getElementById('questionContent').innerHTML);
+      //console.log(document.getElementById('questionContent').innerHTML);
       return updatedQuestions;
     });
   }
 }
-
- // Not using at least for now - maybe ever
-
-// function handleUndo() {
-//   // Check if the current question has changes
-//   if (questions[currentQuestionIndex]['changes'].length > 0) {
-//     const lastChange = currentQuestion.changes[currentQuestion.changes.length - 1];
-
-//     if (lastChange.type === 'highlight') {
-//       lastChange.node.outerHTML = lastChange.node.innerHTML;
-//     }
-//     else if (lastChange.type === 'clickWord' || lastChange.type === 'clickLine' || lastChange.type === 'box') {
-//       lastChange.node.style.border = 'none';
-//     }
-
-//     // Update the currentQuestion by removing the last change
-//     setQuestions(prevQuestions => {
-//       const updatedQuestions = [...prevQuestions];
-//       updatedQuestions[currentQuestionIndex] = {
-//         ...currentQuestion,
-//         changes: currentQuestion.changes.slice(0, -1) // Remove the last change
-//       };
-//       return updatedQuestions;
-//     });
-//   }
-// }
-
 
 
 function handleReset() {
@@ -330,7 +308,7 @@ function checkAnswer() {
 
   console.log(score);
   currentQuestion.studentAnswer = document.getElementById('questionContent').innerHTML;
-  //showSolution();
+  setQuestions(prevQuestions => [...prevQuestions]); // Trigger re-render
 }
 
 
@@ -341,28 +319,15 @@ return (
     <div>
       <h2 className='question-title'>{currentQuestion.title}</h2>
 
-      {currentQuestion.edited ? (
-  <p id="questionContent" onMouseUp={
-      currentQuestion.style === 'highlight' ? handleHighlight :
-      currentQuestion.style === 'box' ? handleBox :
-      currentQuestion.style === 'clickword' ? handleClickWord :
-      handleClickLine
-  }
-  style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
-  dangerouslySetInnerHTML={{ __html: currentQuestion.render !== '' ? currentQuestion.render : currentQuestion.content }}
-  />
-) : (
-  <p id="questionContent" onMouseUp={
-      currentQuestion.style === 'highlight' ? handleHighlight :
-      currentQuestion.style === 'box' ? handleBox :
-      currentQuestion.style === 'clickword' ? handleClickWord :
-      handleClickLine
-  }
-  style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
-  dangerouslySetInnerHTML={{ __html: currentQuestion.content }}
-  />
-)}
-
+<p id="questionContent" onMouseUp={
+    currentQuestion.style === 'highlight' ? handleHighlight :
+    currentQuestion.style === 'box' ? handleBox :
+    currentQuestion.style === 'clickword' ? handleClickWord :
+    handleClickLine
+}
+style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render }}
+/>
 
       </div>
       <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
