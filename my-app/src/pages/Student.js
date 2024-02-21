@@ -117,6 +117,7 @@ export default function Student() {
             ...currentQuestion,
             changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
           };
+          questions[currentQuestionIndex]['edited'] = true;
           questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
           console.log(document.getElementById('questionContent').innerHTML);
           return updatedQuestions;
@@ -241,6 +242,7 @@ export default function Student() {
           ...currentQuestion,
           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
         };
+        questions[currentQuestionIndex]['edited'] = true;
         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
         console.log(document.getElementById('questionContent').innerHTML);
         return updatedQuestions;
@@ -296,6 +298,7 @@ export default function Student() {
           ...currentQuestion,
           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
         };
+        questions[currentQuestionIndex]['edited'] = true;
         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
         console.log(document.getElementById('questionContent').innerHTML);
         return updatedQuestions;
@@ -337,8 +340,10 @@ export default function Student() {
           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
         };
         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
+        questions[currentQuestionIndex]['edited'] = true;
         //console.log(document.getElementById('questionContent').innerHTML);
         return updatedQuestions;
+
       });
     }
   }
@@ -348,6 +353,7 @@ export default function Student() {
     document.getElementById('questionContent').innerHTML = questions[currentQuestionIndex].content;
     questions[currentQuestionIndex]['render'] = '';
     questions[currentQuestionIndex]['changes'] = [];
+    questions[currentQuestionIndex]['edited'] = false;
   }
 
 
@@ -412,7 +418,7 @@ export default function Student() {
                     handleClickLine
             }
               style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
-              dangerouslySetInnerHTML={{ __html: currentQuestion.render !== '' ? currentQuestion.render : currentQuestion.content }}
+              dangerouslySetInnerHTML={{ __html: currentQuestion.render }}
             />
           ) : (
             <p id="questionContent" onMouseUp={
