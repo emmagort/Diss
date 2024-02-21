@@ -45,7 +45,7 @@ function goToNextQuestion() {
   if (currentQuestionIndex === questions.length - 1) {
     return;
   }
-  console.log(questions[currentQuestionIndex]['changes'].length);
+  //console.log(questions[currentQuestionIndex]['changes'].length);
   //hideChanges();
   setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
   //showChanges("next");
@@ -341,15 +341,28 @@ return (
     <div>
       <h2 className='question-title'>{currentQuestion.title}</h2>
 
-<p id="questionContent" onMouseUp={
-    currentQuestion.style === 'highlight' ? handleHighlight :
-    currentQuestion.style === 'box' ? handleBox :
-    currentQuestion.style === 'clickword' ? handleClickWord :
-    handleClickLine
-}
-style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
-dangerouslySetInnerHTML={{ __html: currentQuestion.render === '' ? currentQuestion.content : currentQuestion.render }}
-/>
+      {currentQuestion.edited ? (
+  <p id="questionContent" onMouseUp={
+      currentQuestion.style === 'highlight' ? handleHighlight :
+      currentQuestion.style === 'box' ? handleBox :
+      currentQuestion.style === 'clickword' ? handleClickWord :
+      handleClickLine
+  }
+  style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+  dangerouslySetInnerHTML={{ __html: currentQuestion.render !== '' ? currentQuestion.render : currentQuestion.content }}
+  />
+) : (
+  <p id="questionContent" onMouseUp={
+      currentQuestion.style === 'highlight' ? handleHighlight :
+      currentQuestion.style === 'box' ? handleBox :
+      currentQuestion.style === 'clickword' ? handleClickWord :
+      handleClickLine
+  }
+  style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', }}
+  dangerouslySetInnerHTML={{ __html: currentQuestion.content }}
+  />
+)}
+
 
       </div>
       <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>

@@ -12,7 +12,7 @@ export default function Teacher() {
   const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
   const [newAnswer, setNewAnswer] = useState('');
   // const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , points: '', score: '', graded: false, changes: [], render: ''});
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: '', studentAnswer: '', showingSolution: false, points: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, changes: [], render: '', studentAnswer: '', edited: false, points: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
@@ -27,15 +27,6 @@ export default function Teacher() {
       const questions = [];
       const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
 
-      // for (const block of blocks) {
-      //   if (block.trim() === '') continue;
-      //   const lines = block.split('\n');
-      //   const style = lines[0].split('----Style: ')[1].trim();
-      //   const title = lines[1].split('----Question: ')[1];
-      //   const content = lines[2].split('----Content: ')[1];
-      //   const answers = lines[3].split('----Answers: ')[1];
-      //   const solution = lines[3].split('----Solution: ')[1];
-      //   questions.push({ style, title, content, answers, solution});
       for (const block of blocks) {
         if (block.trim() === '') continue;
         const lines = block.split('\n');
@@ -69,7 +60,7 @@ export default function Teacher() {
 
   const handleExport = (filename) => {
     const content = questions.map(question =>
-      `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answer: ${question.answer}`
+      `----Style: ${question.style}\n----Question: ${question.title}\n----Content: ${question.content}\n----Answers: ${question.answers.join('||')}`
     ).join('\n');
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -243,7 +234,6 @@ export default function Teacher() {
         {/* <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" /> */}
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>
-        {/* <input type="file" onChange={handleImport} /> */}
       </div>
       <div>
         <input type="file" onChange={handleImport} />
