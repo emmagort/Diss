@@ -14,9 +14,6 @@ export default function Teacher() {
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
 
-
-  //trying to do this for json files
-
   const handleImport = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -43,17 +40,6 @@ export default function Teacher() {
 
     reader.readAsText(file);
   };
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-  
-  //   reader.onload = (event) => {
-  //     const questions = JSON.parse(event.target.result);
-  //     const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
-  //     setQuestions([...existingQuestions, ...questions]);
-  //   };
-  
-  //   reader.readAsText(file);
-  // };
 
   const handleSave = () => {
     handleExport(filename);
@@ -67,7 +53,6 @@ export default function Teacher() {
     }
   };
 
-// exporting  json file
 
   const handleExport = (filename) => {
     const exportedQuestions = questions.map(question => {
@@ -107,10 +92,9 @@ export default function Teacher() {
 
 
   function handleInputChange(e) {
-    //setNewQuestion({ ...newQuestion, [e.target.name]: e.target.value });
     let value = e.target.value;
     if (e.target.name === 'answers') {
-      value = value.split(','); // or another delimiter of your choice
+      value = value.split(','); 
     }
     setNewQuestion({ ...newQuestion, [e.target.name]: value });
   }
@@ -153,7 +137,6 @@ export default function Teacher() {
     localStorage.setItem('content', content);
     localStorage.setItem('answers', answers);
     localStorage.setItem('solution', solution);
-    //localStorage.setItem('points', points);
   }, [title, content, answers]);
 
 
@@ -177,7 +160,10 @@ export default function Teacher() {
   }
 
   function handleDeleteAllQuestions() {
-    setQuestions([]);
+    const confirmDelete = window.confirm("Are you sure you want to delete all questions?");
+    if (confirmDelete) {
+      setQuestions([]);
+    }
   }
 
   return (
@@ -189,11 +175,8 @@ export default function Teacher() {
           {selectedQuestionIndex === index && (
             <>
               <p style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>{question.content}</p>
-              {/* <p>The answers are: {question.answers}</p> */}
-              {/* //this needs to be multiple if there is more than 1 answer */}
               <p>The answers are: {question.answers.join(', ')}</p>
               <p>The style is: {question.style}</p>
-              {/* <p>The points are: {question.points}</p> */}
               <p>The solution is: {question.solution}</p>
               <button onClick={() => handleDeleteQuestion(index)}>Delete Question</button>
               <button onClick={() => handleEditQestion(index)}>Edit Question</button>
