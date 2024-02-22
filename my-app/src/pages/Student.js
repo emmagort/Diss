@@ -452,15 +452,17 @@ export default function Student() {
         </div>
         <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
         <div className="button-container" style={{ alignItems: 'left' }}>
-          <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded}>Check Answer</button>
-          <button className='inreractive-button' onClick={handleChange} disabled={!currentQuestion.graded}>Question/Solution</button>
           {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button> */}
           {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
         </div>
         <div className="interaction-controls">
           <div style={{ marginTop: 'auto' }}>
+          <button className='inreractive-button' onClick={checkAnswer} disabled={currentQuestion.graded} hidden={!currentQuestion.edited||currentQuestion.graded}>Check Answer</button>
+          <button className='inreractive-button' onClick={handleChange} hidden={!currentQuestion.graded}>Question/Solution</button>
+          </div>
+          <div style={{ marginTop: 'auto' }}>
             {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
-            <button onClick={handleReset} disabled={currentQuestion.graded}>Reset All</button>
+            <button onClick={handleReset} hidden={currentQuestion.graded}>Reset All</button>
           </div>
           <div style={{ marginTop: 'auto' }}>
             <button onClick={goToPreviousQuestion}disabled={currentQuestionIndex===0}>Previous Question</button>

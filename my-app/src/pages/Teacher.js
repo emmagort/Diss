@@ -110,24 +110,6 @@ export default function Teacher() {
     setNewQuestion({ ...newQuestion, answers: [...newQuestion.answers, ''] });
   };
 
-  // function handleAddQuestion(e) {
-  //   if (!newQuestion.style || !newQuestion.title || !newQuestion.content || newQuestion.answers.length === 0 || !newQuestion.solution) {
-  //     alert("Please fill in all the fields before adding a question.");
-  //     return;
-  //   }
-  //   let newQuestions = [...questions];
-  //   if (editingIndex !== null) {
-  //     newQuestions.splice(editingIndex, 0, newQuestion);
-  //     setQuestions(newQuestions);
-  //     setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
-  //     setEditingIndex(null);
-  //   }
-  //   else {
-  //     setQuestions([...questions, newQuestion]);
-  //   }
-  //   setAnswers([]);
-  //   setNewQuestion({ style: '', title: '', content: '', answers: [...answers], solution: ''});
-  // }
   function handleAddQuestion(e) {
     // Filter out any empty answers
     const nonEmptyAnswers = newQuestion.answers.filter(answer => answer.trim() !== '');

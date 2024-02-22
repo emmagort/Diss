@@ -41,6 +41,10 @@ body {
     cursor: default;
   }
 
+  button:hidden {
+    display: none;
+  }
+
   button.submit-button {
     background-color: #4CAF50;
     color: white;
