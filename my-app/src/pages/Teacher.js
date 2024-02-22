@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
+import './Teacher.css';
 export default function Teacher() {
   const [title, setTitle] = useState(localStorage.getItem('title') || '');
   const [content, setContent] = useState(localStorage.getItem('content') || '');
