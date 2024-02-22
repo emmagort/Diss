@@ -20,15 +20,40 @@ export default function Teacher() {
   const handleImport = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
-  
+
     reader.onload = (event) => {
-      const questions = JSON.parse(event.target.result);
+      const importedQuestions = JSON.parse(event.target.result);
       const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
-      setQuestions([...existingQuestions, ...questions]);
+      const allQuestions = [...existingQuestions, ...importedQuestions];
+
+      const missingFields = allQuestions.filter(question => {
+        return !question.style || !question.title || !question.content || question.answers.length === 0 || !question.solution;
+      });
+
+      console.log(missingFields.length);
+
+      if (missingFields.length > 0) {
+        console.warn('Warning: Some questions in the imported file are missing fields.');
+        alert("Please make sure all the questions in your file have all fields filled in." );
+        return
+      }
+
+      setQuestions(allQuestions);
     };
-  
+
     reader.readAsText(file);
   };
+  //   const file = event.target.files[0];
+  //   const reader = new FileReader();
+  
+  //   reader.onload = (event) => {
+  //     const questions = JSON.parse(event.target.result);
+  //     const existingQuestions = JSON.parse(localStorage.getItem('questions')) || [];
+  //     setQuestions([...existingQuestions, ...questions]);
+  //   };
+  
+  //   reader.readAsText(file);
+  // };
 
   const handleSave = () => {
     handleExport(filename);
@@ -45,7 +70,12 @@ export default function Teacher() {
 // exporting  json file
 
   const handleExport = (filename) => {
-    const content = JSON.stringify(questions);
+    const exportedQuestions = questions.map(question => {
+      const { style, title, content, answers, solution } = question;
+      return { style, title, content, answers, solution };
+    });
+
+    const content = JSON.stringify(exportedQuestions);
     const blob = new Blob([content], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
