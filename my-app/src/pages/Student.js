@@ -1,11 +1,13 @@
 import React, { useState, useEffect, } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import 'prismjs/themes/prism.css';
 import './Student.css';
 import './Teacher.css';
+import Results from './Results';
 
 export default function Student() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { answer } = location.state;
   const [highlightColor, setHighlightColor] = useState('#FDDF7E');
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
@@ -63,9 +65,13 @@ export default function Student() {
   function goToNextQuestion() {
     console.log('Hello world!');
     if (currentQuestionIndex === questions.length - 1) {
-      return;
+      //return;
+      navigate('/results', { state: { questions } }); 
     }
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    if (location.pathname === '/results') {
+      return <Results questions={location.state.questions} />;
+    }
   }
 
   function goToPreviousQuestion() {
