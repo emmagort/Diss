@@ -14,6 +14,8 @@ export default function Index() {
             <a href="http://localhost:3000/teacher">Teacher</a>
             <br></br>
             <a href="http://localhost:3000/home">Home</a>
+            <br></br>
+            <a href="http://localhost:3000/results">Results</a>
         </div>
         </div>
     );
