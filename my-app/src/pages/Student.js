@@ -65,14 +65,18 @@ export default function Student() {
   function goToNextQuestion() {
     console.log('Hello world!');
     if (currentQuestionIndex === questions.length - 1) {
-      //return;
-      navigate('/results', { state: { questions } }); 
+      return;
     }
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+  }
+
+  function handleSubmit() {
+    navigate('/results', { state: { questions } });
     if (location.pathname === '/results') {
       return <Results questions={location.state.questions} />;
     }
   }
+
 
   function goToPreviousQuestion() {
     if (currentQuestionIndex > 0) {
@@ -459,8 +463,9 @@ export default function Student() {
             <button onClick={handleReset} disabled={currentQuestion.graded}>Reset All</button>
           </div>
           <div style={{ marginTop: 'auto' }}>
-            <button onClick={goToPreviousQuestion}>Previous Question</button>
-            <button onClick={goToNextQuestion}>Next Question</button>
+            <button onClick={goToPreviousQuestion}disabled={currentQuestionIndex===0}>Previous Question</button>
+            <button onClick={goToNextQuestion}disabled={currentQuestionIndex===(questions.length-1)}>Next Question</button>
+            
           </div>
 
           <label className='color-selection'>
@@ -474,6 +479,7 @@ export default function Student() {
               </label>
             ))}
           </label>
+          <button onClick={handleSubmit} className="submit-button">Submit</button>
         </div>
       </div>
     </div>
