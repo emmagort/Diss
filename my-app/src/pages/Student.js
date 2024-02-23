@@ -481,7 +481,9 @@ export default function Student() {
               </label>
             ))}
           </label>
-          <button onClick={handleSubmit} className="submit-button">Submit</button>
+          {questions.every(question => question.changes && question.changes.length >= 1) && (
+        <button onClick={handleSubmit} className="submit-button">Submit</button>
+        )}
         </div>
       </div>
     </div>
