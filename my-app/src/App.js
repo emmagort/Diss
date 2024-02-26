@@ -21,7 +21,7 @@ export default function App() {
           <Route path="student" element={<Student />} />
           <Route path="teacher" element={<Teacher />} />
           <Route path="results" element={<Results questions={qeuestions} />} />
-          <Route path="*" element={<NoPage />} />
+          {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </BrowserRouter>
   );
