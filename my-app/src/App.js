@@ -16,7 +16,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/" index element={<Index />} />
+          <Route index element={<Index />} />
+          <Route path="*" element={<NoPage />} />
           <Route path="home" element={<Home />} />
           <Route path="student" element={<Student />} />
           <Route path="teacher" element={<Teacher />} />
