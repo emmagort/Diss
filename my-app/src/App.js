@@ -14,13 +14,13 @@ import Results from './pages/Results';
 export default function App() {
   const qeuestions = JSON.parse(localStorage.getItem('questions')) || [];
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Routes>
           <Route index element={<Index />} />
-          <Route path="home" element={<Home />} />
-          <Route path="student" element={<Student />} />
-          <Route path="teacher" element={<Teacher />} />
-          <Route path="results" element={<Results questions={qeuestions} />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/student" element={<Student />} />
+          <Route path="/teacher" element={<Teacher />} />
+          <Route path="/results" element={<Results questions={qeuestions} />} />
           {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </BrowserRouter>
