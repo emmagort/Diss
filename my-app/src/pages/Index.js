@@ -1,7 +1,7 @@
-// import Home from './Home';
-// import Student from './Student';
-// import Teacher from './Teacher';
-// import React from 'react'
+import Home from './Home';
+import Student from './Student';
+import Teacher from './Teacher';
+import React from 'react'
 
 // export default function Index() {
 //     return (
