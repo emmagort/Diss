@@ -16,12 +16,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route index element={<Index />} />
+          <Route path="/" index element={<Index />} />
           <Route path="home" element={<Home />} />
           <Route path="student" element={<Student />} />
           <Route path="teacher" element={<Teacher />} />
           <Route path="results" element={<Results questions={qeuestions} />} />
-          <Route path="*" element={<Index />} />
       </Routes>
     </BrowserRouter>
   );
