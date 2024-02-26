@@ -17,11 +17,11 @@ export default function App() {
     <BrowserRouter>
       <Routes>
           <Route index element={<Index />} />
-          <Route path="*" element={<NoPage />} />
           <Route path="home" element={<Home />} />
           <Route path="student" element={<Student />} />
           <Route path="teacher" element={<Teacher />} />
           <Route path="results" element={<Results questions={qeuestions} />} />
+          {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </BrowserRouter>
   );
