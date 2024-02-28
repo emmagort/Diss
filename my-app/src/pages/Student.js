@@ -15,25 +15,6 @@ export default function Student() {
   const [changes, setChanges] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // const newNode = useRef(null);
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     // Update the position of the box based on the new window dimensions
-  //     if (newNode.current) {
-  //     const updatedRect = newNode.getBoundingClientRect();
-  //     newNode.style.left = `${updatedRect.left - 5}px`;
-  //     newNode.style.top = `${updatedRect.top}px`;
-  //     }
-  //   };
-
-  //   window.addEventListener('resize', handleResize);
-
-  //   return () => {
-  //     // Clean up the event listener when the component unmounts
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
-
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
   }, [questions]);
@@ -61,19 +42,6 @@ export default function Student() {
   }, []);
   
 
-
-  // useEffect(() => {
-  //   // Get the undo button
-  //   const undoButton = document.getElementById('undoButton');
-
-  //   // Get the changes for the current page
-  //   const currentPageChanges = changes.filaater(change => change.index === currentQuestionIndex);
-
-  //   // Disable the undo button if there are no changes for the current page, enable it otherwise
-  //   undoButton.disabled = currentPageChanges.length === 0;
-  // }, [changes, currentQuestionIndex]);
-
-
   function goToNextQuestion() {
     console.log('Hello world!');
     if (currentQuestionIndex === questions.length - 1) {
@@ -97,59 +65,6 @@ export default function Student() {
   }
 
   const currentQuestion = questions[currentQuestionIndex];
-
-
-
-  // function handleBox() {
-
-  //   if (currentQuestion.graded === true) {
-  //     return;
-  //   }
-  //   const selection = window.getSelection();
-  //   if (selection.toString().trim() !== '') {
-  //     const text = selection.toString();
-  //     if (selection.rangeCount > 0) {
-  //       const range = selection.getRangeAt(0);
-  //       const rect = range.getBoundingClientRect();
-
-  //       const startRange = document.createRange();
-  //       startRange.setStart(range.startContainer, range.startOffset);
-  //       startRange.setEnd(range.startContainer, range.startOffset + 1);
-  //       const startRect = startRange.getBoundingClientRect();
-
-  //       const newNode = document.createElement('div');
-  //       newNode.style.position = 'absolute';
-  //       newNode.style.left = `${startRect.left - 5}px`;
-  //       newNode.style.top = `${rect.top}px`;
-  //       const width = rect.right - startRect.left;
-  //       if (width === rect.width) {
-  //         newNode.style.width = `${width + 15}px`;
-  //       }
-  //       else {
-  //         newNode.style.width = `${width + 5}px`;
-  //       }
-  //       newNode.style.height = `${rect.height}px`;
-  //       newNode.style.border = `2px solid ${highlightColor}`;
-  //       newNode.style.pointerEvents = 'none';
-  //       const questionContainer = document.getElementById('questionContent');
-  //       questionContainer.appendChild(newNode);
-  //       const prevColor = highlightColor;
-
-  //       const newChange = { type: 'box', color: prevColor, content: text };
-  //       setQuestions(prevQuestions => {
-  //         const updatedQuestions = [...prevQuestions];
-  //         updatedQuestions[currentQuestionIndex] = {
-  //           ...currentQuestion,
-  //           changes: currentQuestion.changes ? [...currentQuestion.changes, newChange] : [newChange]
-  //         };
-  //         questions[currentQuestionIndex]['edited'] = true;
-  //         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
-  //         console.log(document.getElementById('questionContent').innerHTML);
-  //         return updatedQuestions;
-  //       });
-  //     }
-  //   }
-  // }
 
   function handleBox() {
     if (currentQuestion.graded === true) {
@@ -222,20 +137,10 @@ export default function Student() {
       return;
     }
     const selection = window.getSelection();
-    //const alreadyClicked = currentQuestion.changes && currentQuestion.changes.some(change => change.node.textContent === selection.toString());
-
-    //if (alreadyClicked) {
-    //return;
-    //}
 
     if (selection.toString().trim() !== '') {
       if (!selection.rangeCount) return;
       const text = selection.toString();
-      // const changes = currentQuestion.changes;
-      // const alreadyHighlighted = changes.some(change => change.content === selection.toString());
-      // if (alreadyHighlighted) {
-      //   return;
-      // }
 
       let range = selection.getRangeAt(0);
       let rangeData = {
@@ -250,9 +155,6 @@ export default function Student() {
       const prevColor = mark.style.backgroundColor;
       mark.appendChild(range.extractContents());
       range.insertNode(mark);
-
-      // const newChange = { type: 'highlight', node: mark, range: rangeData, color: prevColor };
-      //const newChange = { type: 'highlight', node: mark, range: range, color: prevColor };
       const newChange = { type: 'highlight', color: prevColor, content: text };
 
       // Update the currentQuestion with the new change
@@ -374,6 +276,7 @@ export default function Student() {
     questions[currentQuestionIndex]['render'] = '';
     questions[currentQuestionIndex]['changes'] = [];
     questions[currentQuestionIndex]['edited'] = false;
+    setQuestions(prevQuestions => [...prevQuestions]);
   }
 
 
@@ -431,15 +334,13 @@ export default function Student() {
 
   return (
     <div className="game-container">
-    {/* // <div style ={{ paddingLeft: '20px',  */}
-    {/* // position: 'fixed', 
-    // width: '100%', 
-    // height: '100vh', 
-    // overflow: 'auto' }} > */}
+      {questions.length === 0 ? (
+        <p>No questions have been created yet.</p>
+      ) : (
       <div >
         <div>
-          <h2 className='question-title'>{currentQuestion.title}</h2>
-
+          <h2 className='question-title' style={{position: 'sticky, top: 0'}}>{currentQuestion.title}</h2>
+          <div className='question-container'>
           {currentQuestion.edited ? (
             <p id="questionContent" onMouseUp={
               currentQuestion.style === 'highlight' ? handleHighlight :
@@ -461,6 +362,7 @@ export default function Student() {
               dangerouslySetInnerHTML={{ __html: currentQuestion.content }}
             />
           )}
+          </div>
         </div>
         <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
         <div className="button-container" style={{ alignItems: 'left' }}>
@@ -494,10 +396,11 @@ export default function Student() {
             ))}
           </label>
           {questions.every(question => question.changes && question.changes.length >= 1) && (
-        <button onClick={handleSubmit} className="submit-button">Submit</button>
+        <button className="submit-button" onClick={handleSubmit} disabled={questions.some(question => !question.graded)}>Submit</button>
         )}
         </div>
       </div>
+      )}
     </div>
   );
 }

@@ -48,10 +48,38 @@ body {
   button.submit-button {
     background-color: #4CAF50;
     color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button.submit-button:hover {
+    background-color: #45a049;
+  }
+
+  button.submit-button:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+  }
+
+  .error-message {
+    display: none;
+    color: red;
+    margin-top: 5px;
+  }
+
+  button.submit-button:disabled + .error-message {
+    display: block;
+  }
+  
+    /* background-color: #4CAF50;
+    color: white;
     padding: 10px 15px; /* Adjust padding for a bit more presence */
-    border: none; /* Remove border for a cleaner look */
-    border-radius: 5px; /* Add border-radius for a slightly rounded appearance */
-}
+    /*border: none; /* Remove border for a cleaner look */
+    /*border-radius: 5px; /* Add border-radius for a slightly rounded appearance */
+
 
 button.submit-button:hover {
     background-color: #45a049; /* Slightly darker color on hover */

@@ -40,7 +40,7 @@ export default function App() {
   return (
     <HashRouter basename='/'>
       <Routes>
-          <Route index element={<Index />} />
+          <Route index element={<Teacher />} />
           <Route path="/home" element={<Home />} />
           <Route path="/student" element={<Student />} />
           <Route path="/teacher" element={<Teacher />} />
