@@ -24,8 +24,24 @@ const Results = ({ questions }) => {
     setOverallScore(score);
   }
 
+  // function handleReset() {
+  //   const updatedQuestions = questions.map(question => ({
+  //     ...question,
+  //     graded: false,
+  //     showingSolution: false,
+  //     edited: false,
+  //     render: '',
+  //     studentAnswer: '',
+  //     changes: [],
+  //     score: 0
+  //   }));
+
+  //   navigate('/student', { state: { questions: updatedQuestions } });
+  // }
+
+
   function handleReset() {
-    const updatedQuestions = questions.map(question => ({
+    const resetQuestions = questions.map(question => ({
       ...question,
       graded: false,
       showingSolution: false,
@@ -34,10 +50,14 @@ const Results = ({ questions }) => {
       studentAnswer: '',
       changes: [],
       score: 0
-    }));
 
-    navigate('/student', { state: { questions: updatedQuestions } });
+    }));
+    localStorage.setItem('questions', JSON.stringify(resetQuestions));
+    navigate('/student', { state: { questions: resetQuestions } });
+    //window.location.href = '/#/student';
+
   }
+  
 
   function handleReview() {
     navigate('/student', { state: { questions } });
