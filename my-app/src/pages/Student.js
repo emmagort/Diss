@@ -47,6 +47,18 @@ export default function Student() {
     setChanges(storedChanges);
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = 'Your boxes may appear in the wrong place if you reload this page.';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   
 
 

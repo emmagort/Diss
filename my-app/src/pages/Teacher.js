@@ -9,7 +9,7 @@ export default function Teacher() {
   const [questions, setQuestions] = useState(JSON.parse(localStorage.getItem('questions')) || []);
   const [answers, setAnswers] = useState(localStorage.getItem('answers')?.split(',') || ['']);
   const [newAnswer, setNewAnswer] = useState('');
-  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[] , solution: '' , score: '', graded: false, showingSolution: false, changes: [], render: '', studentAnswer: '', edited: false, points: ''});
+  const [newQuestion, setNewQuestion] = useState({ style: '', title: '', content: '', answers:[''] , solution: '' , score: '', graded: false, showingSolution: false, changes: [], render: '', studentAnswer: '', edited: false, points: ''});
   const [editingIndex, setEditingIndex] = useState(null);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(null);
   const [filename, setFilename] = useState('questions.txt');
@@ -200,6 +200,7 @@ export default function Teacher() {
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Content" />
         {newQuestion.answers.map((answer, index) => (
           <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+          {!newQuestion.content.includes(answer) && <span style={{ color: 'red', marginRight: '5px'}} title="This answer is not contained in the question content.">❗</span>}
           <textarea
             style={{ whiteSpace: 'pre-wrap' }}
             key={index}
@@ -208,7 +209,6 @@ export default function Teacher() {
             onChange={(e) => handleAnswerChange(e, index)}
             placeholder="New Answer"
           />
-          {!newQuestion.content.includes(answer) && <span style={{ color: 'red' }} title = "This answer is not contained in the question content.">❗</span>}
           </div>
         ))}
         <button onClick={handleAddAnswer}>Add another answer</button>

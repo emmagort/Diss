@@ -2,7 +2,7 @@
 import React from 'react'
 // import ReactDOM from 'react-dom'
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+//import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Student from './pages/Student';
@@ -36,7 +36,7 @@ import Results from './pages/Results';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 
 export default function App() {
-  const qeuestions = JSON.parse(localStorage.getItem('questions')) || [];
+  const questions = JSON.parse(localStorage.getItem('questions')) || [];
   return (
     <HashRouter basename='/'>
       <Routes>
@@ -44,7 +44,7 @@ export default function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/student" element={<Student />} />
           <Route path="/teacher" element={<Teacher />} />
-          <Route path="/results" element={<Results questions={qeuestions} />} />
+          <Route path="/results" element={<Results questions={questions} />} />
           {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </HashRouter>
