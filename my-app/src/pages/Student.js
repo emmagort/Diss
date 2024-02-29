@@ -14,6 +14,8 @@ export default function Student() {
   const colors = ['#CE97FB', '#F6A5EB', '#FAA99D', '#FDDF7E', '#9BFBE1', '#67EBFA'];
   const [changes, setChanges] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [boxes, setBoxes] = useState([]);
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('questions', JSON.stringify(questions));
@@ -37,6 +39,7 @@ export default function Student() {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      handleBox();
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
@@ -67,6 +70,12 @@ export default function Student() {
   const currentQuestion = questions[currentQuestionIndex];
 
   function handleBox() {
+    const container = document.getElementById('questionContent');
+    if (container !== null) {
+      container.style.position = 'relative';
+    }
+
+    const prevQuestions = [...questions];
     if (currentQuestion.graded === true) {
       return;
     }
@@ -85,12 +94,15 @@ export default function Student() {
         const newNode = document.createElement('div');
         newNode.className = 'box';
         newNode.style.position = 'absolute';
+        //newNode.style.position = 'relative';
 
-        const container = document.getElementById('questionContent');
-        container.style.position = 'relative';
+        // const container = document.getElementById('questionContent');
+        // container.style.position = 'relative';
         const containerRect = container.getBoundingClientRect();
-
-        const left = startRect.left - containerRect.left;
+        
+        const left = startRect.left - containerRect.left;;
+        //const top =   - rect.top - containerRect.top  ;
+        // const left = startRect.left - containerRect.left;
         const top = rect.top - containerRect.top;
 
         newNode.style.left = `${left - 5}px`;
@@ -108,6 +120,9 @@ export default function Student() {
         const questionContainer = document.getElementById('questionContent');
         questionContainer.appendChild(newNode);
         const prevColor = highlightColor;
+      //   const boxes = JSON.parse(localStorage.getItem(`boxes-${currentQuestionIndex}`)) || [];
+      // boxes.push({ left: newNode.style.left, top: newNode.style.top, width: newNode.style.width, height: newNode.style.height, prevColor: prevColor });
+      // localStorage.setItem(`boxes-${currentQuestionIndex}`, JSON.stringify(boxes));
 
         const newChange = { type: 'box', color: prevColor, content: text };
         setQuestions(prevQuestions => {
@@ -122,6 +137,9 @@ export default function Student() {
           return updatedQuestions;
         });
       }
+    }
+    else {  
+      return prevQuestions;
     }
   }
 
@@ -280,6 +298,8 @@ export default function Student() {
     questions[currentQuestionIndex]['changes'] = [];
     questions[currentQuestionIndex]['edited'] = false;
     setQuestions(prevQuestions => [...prevQuestions]);
+
+    localStorage.removeItem(`boxes-${currentQuestionIndex}`);
   }
 
 

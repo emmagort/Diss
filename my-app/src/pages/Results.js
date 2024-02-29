@@ -9,6 +9,7 @@ const Results = ({ questions }) => {
   const [overallScore, setOverallScore] = useState(0); // Add state for overall score
   const totalPoints = questions.reduce((total, question) => total + question.answers.length, 0);
   const navigate = useNavigate();
+  const [showResults, setShowResults] = useState(false); // Add this line
 
   useEffect(() => {
     setLoaded(true);
@@ -28,8 +29,6 @@ const Results = ({ questions }) => {
     setOverallScore(score);
   }
 
- 
-  const [showResults, setShowResults] = useState(false); // Add this line
   
     function handleShowScore() {
       setShowResults(true); // Add this line
