@@ -13,6 +13,10 @@ const Results = ({ questions }) => {
   useEffect(() => {
     setLoaded(true);
     calculateOverallScore(); // Calculate the initial overall score
+    const showResultsFromStorage = localStorage.getItem('showResults'); // Get showResults from local storage
+    if (showResultsFromStorage === 'true') {
+      setShowResults(true); // If showResults is true in local storage, set the state to true
+    }
   }, []);
 
   useEffect(() => {
@@ -24,20 +28,17 @@ const Results = ({ questions }) => {
     setOverallScore(score);
   }
 
-  // function handleReset() {
-  //   const updatedQuestions = questions.map(question => ({
-  //     ...question,
-  //     graded: false,
-  //     showingSolution: false,
-  //     edited: false,
-  //     render: '',
-  //     studentAnswer: '',
-  //     changes: [],
-  //     score: 0
-  //   }));
+ 
+  const [showResults, setShowResults] = useState(false); // Add this line
+  
+    function handleShowScore() {
+      setShowResults(true); // Add this line
+      localStorage.setItem('showResults', 'true');
+      window.location.reload();
+      
+    }
+  
 
-  //   navigate('/student', { state: { questions: updatedQuestions } });
-  // }
 
 
   function handleReset() {
@@ -52,6 +53,7 @@ const Results = ({ questions }) => {
       score: 0
 
     }));
+    localStorage.setItem('showResults', 'false');
     localStorage.setItem('questions', JSON.stringify(resetQuestions));
     navigate('/student', { state: { questions: resetQuestions } });
     //window.location.href = '/#/student';
@@ -63,18 +65,22 @@ const Results = ({ questions }) => {
     navigate('/student', { state: { questions } });
   }
 
-  function handleShowScore() {
-    window.refresh();
-  }
+  // function handleShowScore() {
+  //   window.refresh();
+  // }
 
   return (
     <div>
       {loaded && (
         <>
           <h1>Results</h1>
-          <p>Your overall grade: {overallScore}/{totalPoints}</p>
+          <p hidden={!showResults}>Your overall grade: {overallScore}/{totalPoints}</p>
+          <button hidden = {showResults} onClick={handleShowScore}>Show Results</button>
+          <div hidden = {!showResults}>
           <button onClick={handleReset}>Retake Quiz</button>
           <button onClick={handleReview}>Review</button>
+          </div>
+  
         </>
       )}
     </div>
