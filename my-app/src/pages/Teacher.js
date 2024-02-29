@@ -196,7 +196,7 @@ export default function Teacher() {
           <option value="clickword">Click Word</option>
           <option value="clickline">Click Line</option>
         </select>
-        <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Title" />
+        <input name="title" value={newQuestion.title} onChange={handleInputChange} placeholder="Question" />
         <textarea name="content" value={newQuestion.content} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Content" />
         {newQuestion.answers.map((answer, index) => (
           <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
@@ -212,7 +212,7 @@ export default function Teacher() {
           </div>
         ))}
         <button onClick={handleAddAnswer}>Add another answer</button>
-        <textarea name="solution" value={newQuestion.solution} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Solution" />
+        <textarea name="solution" value={newQuestion.solution} onChange={handleInputChange} style={{ whiteSpace: 'pre-wrap' }} placeholder="Feedback" />
         {/* <input name="points" value={newQuestion.points} onChange={handleInputChange} placeholder="Points" /> */}
         <button onClick={handleAddQuestion}>{editingIndex !== null ? 'Update Question' : 'Add Question'}</button>
         <button onClick={handleDeleteAllQuestions}>Delete All Questions</button>

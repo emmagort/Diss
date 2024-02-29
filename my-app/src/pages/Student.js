@@ -86,14 +86,10 @@ export default function Student() {
         newNode.className = 'box';
         newNode.style.position = 'absolute';
 
-        // Get the parent container
         const container = document.getElementById('questionContent');
         container.style.position = 'relative';
-
-        // Get the bounding rectangle of the parent container
         const containerRect = container.getBoundingClientRect();
 
-        // Calculate the position of the box relative to the parent container
         const left = startRect.left - containerRect.left;
         const top = rect.top - containerRect.top;
 
@@ -172,12 +168,12 @@ export default function Student() {
 
       // Clear the selection
       if (window.getSelection) {
-        if (window.getSelection().empty) {  // Chrome
+        if (window.getSelection().empty) {  
           window.getSelection().empty();
-        } else if (window.getSelection().removeAllRanges) {  // Firefox
+        } else if (window.getSelection().removeAllRanges) {  
           window.getSelection().removeAllRanges();
         }
-      } else if (document.selection) {  // IE?
+      } else if (document.selection) {  
         document.selection.empty();
       }
     }
@@ -198,11 +194,6 @@ export default function Student() {
     selection.addRange(range);
     selection.modify('move', 'backward', 'word');
     selection.modify('extend', 'forward', 'word');
-    // const changes = currentQuestion.changes;
-    // const alreadyClicked = changes.some(change => change.content === selection.toString());
-    // if (alreadyClicked) {
-    //   return;
-    // }
 
     if (selection.toString().trim() !== '') {
       const text = selection.toString();
@@ -212,7 +203,6 @@ export default function Student() {
       span.appendChild(document.createTextNode(selection.toString()));
       selection.getRangeAt(0).deleteContents();
       selection.getRangeAt(0).insertNode(span);
-      //setChanges(prevChanges => [...prevChanges, { type: 'clickWord', node: span, index: currentQuestionIndex }]);
       const newChange = { type: 'clickWord', color: prevColor, content: text };
       setQuestions(prevQuestions => {
         const updatedQuestions = [...prevQuestions];
@@ -225,6 +215,16 @@ export default function Student() {
         console.log(document.getElementById('questionContent').innerHTML);
         return updatedQuestions;
       });
+      // Clear the selection
+      if (window.getSelection) {
+        if (window.getSelection().empty) {  
+          window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {  
+        document.selection.empty();
+      }
     }
   }
 
@@ -239,12 +239,6 @@ export default function Student() {
     selection.modify('move', 'backward', 'lineboundary');
     selection.modify('extend', 'forward', 'lineboundary');
 
-    // const changes = currentQuestion.changes;
-    // const alreadyClicked = changes.some(change => change.content === selection.toString());
-    // if (alreadyClicked) {
-    //   return;
-    // }
-
     if (selection.toString().trim() !== '') {
       const text = selection.toString();
       const span = document.createElement('span');
@@ -253,7 +247,6 @@ export default function Student() {
       span.appendChild(document.createTextNode(selection.toString()));
       selection.getRangeAt(0).deleteContents();
       selection.getRangeAt(0).insertNode(span);
-      //setChanges(prevChanges => [...prevChanges, { type: 'clickLine', node: span, index: currentQuestionIndex }]);
       const newChange = { type: 'clickLine', color: prevColor, content: text };
       setQuestions(prevQuestions => {
         const updatedQuestions = [...prevQuestions];
@@ -263,10 +256,20 @@ export default function Student() {
         };
         questions[currentQuestionIndex]['render'] = document.getElementById('questionContent').innerHTML;
         questions[currentQuestionIndex]['edited'] = true;
-        //console.log(document.getElementById('questionContent').innerHTML);
         return updatedQuestions;
 
       });
+
+      // Clear the selection
+      if (window.getSelection) {
+        if (window.getSelection().empty) {  
+          window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {  
+        document.selection.empty();
+      }
     }
   }
 
@@ -366,8 +369,6 @@ export default function Student() {
         </div>
         <p>Score: {currentQuestion.score}/{currentQuestion.answers.length}</p>
         <div className="button-container" style={{ alignItems: 'left' }}>
-          {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>Question/Solution</button> */}
-          {/* <button className='inreractive-button' onClick={showSolution} disabled={!currentQuestion.graded}>{currentQuestion.showingSolution ? 'Solution' : 'Question'}</button> */}
         </div>
         <div className="interaction-controls">
           <div style={{ marginTop: 'auto' }}>
@@ -375,7 +376,6 @@ export default function Student() {
           <button className='inreractive-button' onClick={handleChange} hidden={!currentQuestion.graded}>Question/Solution</button>
           </div>
           <div style={{ marginTop: 'auto' }}>
-            {/* <button id="undoButton" onClick={handleUndo}>Undo</button> */}
             <button onClick={handleReset} hidden={currentQuestion.graded}>Reset All</button>
           </div>
           <div style={{ marginTop: 'auto' }}>
