@@ -38,7 +38,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 export default function App() {
   const questions = JSON.parse(localStorage.getItem('questions')) || [];
   return (
-    <HashRouter basename='/'>
+    <HashRouter basename={process.env.PUBLIC_URL}>
       <Routes>
           <Route index element={<Teacher />} />
           <Route path="/home" element={<Home />} />
